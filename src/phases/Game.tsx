@@ -45,11 +45,11 @@ export function Game() {
 
           <ColorUpPanel />
           <GamePlayers />
-          <SnapshotPanel />
         </div>
 
-        <aside className="mt-4 lg:sticky lg:top-[4.5rem] lg:mt-0 lg:max-h-[calc(100dvh-6.5rem)] lg:overflow-y-auto lg:pb-2 lg:[scrollbar-width:thin]">
+        <aside className="mt-4 space-y-4 lg:sticky lg:top-[4.5rem] lg:mt-0 lg:max-h-[calc(100dvh-6.5rem)] lg:overflow-y-auto lg:pb-2 lg:[scrollbar-width:thin]">
           <BankPanel />
+          <SnapshotPanel />
         </aside>
       </div>
 

@@ -108,10 +108,10 @@ export function allocateProportional(total: number, weights: number[]): number[]
   if (n === 0) return [];
   const sum = weights.reduce((a, b) => a + b, 0);
   if (sum <= 0) {
-    // No signal to split on: give it all to the first slot rather than inventing a spread.
-    const out = new Array<number>(n).fill(0);
-    out[0] = total;
-    return out;
+    // Nothing to split on. Handing the whole amount to the first slot would
+    // invent a winner out of an empty count, so allocate nothing and let the
+    // caller surface the fact that the total is unaccounted for.
+    return new Array<number>(n).fill(0);
   }
 
   const exact = weights.map((w) => (total * w) / sum);

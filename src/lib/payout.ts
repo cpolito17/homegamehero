@@ -108,10 +108,21 @@ export function computeCashPayout(input: CashPayoutInput): CashPayoutResult {
     });
   }
   if (deltaCents !== 0 && input.resolution === 'scale') {
-    notices.push({
-      level: 'info',
-      message: 'Payouts scaled to match the cash actually in the pot, so the total comes out even.',
-    });
+    // Scaling needs something to scale. With nothing counted there is no share
+    // to compute, so say the pot is unpaid rather than claiming it came out even.
+    notices.push(
+      totalUnits <= 0 && potCents > 0
+        ? {
+            level: 'error',
+            message:
+              'Nothing has been counted yet, so there is no share to scale. Enter the chips in front of each player.',
+          }
+        : {
+            level: 'info',
+            message:
+              'Payouts scaled to match the cash actually in the pot, so the total comes out even.',
+          },
+    );
   }
   if (deltaCents !== 0 && input.resolution === 'accept') {
     notices.push({

@@ -72,8 +72,9 @@ describe('allocateProportional', () => {
     expect(Math.max(...out) - Math.min(...out)).toBe(1);
   });
 
-  it('handles zero weights without inventing a spread', () => {
-    expect(allocateProportional(500, [0, 0])).toEqual([500, 0]);
+  it('allocates nothing when there is no weight to split on', () => {
+    // Handing it all to the first slot would name a winner out of an empty count.
+    expect(allocateProportional(500, [0, 0])).toEqual([0, 0]);
     expect(allocateProportional(0, [3, 7])).toEqual([0, 0]);
   });
 

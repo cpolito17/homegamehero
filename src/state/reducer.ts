@@ -73,6 +73,18 @@ export function currentBlinds(state: GameState): { smallBlind: number; bigBlind:
   return { smallBlind: level.smallBlind, bigBlind: level.bigBlind, ante: level.ante };
 }
 
+/**
+ * True once a tournament has passed its rebuy cutoff.
+ *
+ * `rebuyThroughLevel` is 1-based and counts playing levels, so level index 1 is
+ * level 2. A cutoff of 0 means a freezeout, where nothing was ever allowed.
+ */
+export function rebuysClosed(state: GameState): boolean {
+  if (state.format !== 'tournament') return false;
+  if (state.tournament.rebuyThroughLevel <= 0) return true;
+  return state.clock.levelIndex + 1 > state.tournament.rebuyThroughLevel;
+}
+
 /** The stack a player should be given for a given amount of money. */
 export function stackUnitsFor(state: GameState, cents: number): number {
   if (state.format === 'tournament') {
@@ -351,6 +363,11 @@ export function reducer(state: GameState, action: Action): GameState {
     }
 
     case 'rebuy': {
+      // Once a tournament's rebuy period closes, no more money enters the prize
+      // pool. Enforced here as well as on the button, so the rule does not rest
+      // on a disabled attribute.
+      if (rebuysClosed(state)) return state;
+
       const blinds = currentBlinds(state);
       const stack = rebuyStack({
         chipSet: state.chipSet,

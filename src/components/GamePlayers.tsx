@@ -204,7 +204,7 @@ function PlayerRow({
               type="button"
               className="btn-ghost !px-2.5 !py-1.5 !text-xs"
               onClick={() => onToggle('rebuy')}
-              disabled={rebuyLocked && !busted}
+              disabled={rebuyLocked}
             >
               Rebuy
             </button>
