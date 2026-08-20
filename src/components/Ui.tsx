@@ -64,6 +64,39 @@ export function ShellCard({
   );
 }
 
+/**
+ * Tiles a phase's panels into columns once there is room for them.
+ *
+ * Multi-column rather than a grid, so panels keep their natural heights instead
+ * of stretching to fill a row, and so the DOM order is untouched: a narrow
+ * screen gets exactly the single column it had before, in the same order.
+ */
+export function TileGrid({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`space-y-4 lg:columns-2 lg:gap-5 lg:space-y-0 lg:[&>*]:mb-5 lg:[&>*]:break-inside-avoid ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * A tile that runs the full width of a TileGrid instead of sitting in a column.
+ *
+ * For panels whose content is naturally wide, like a stack per player, and for
+ * the tall trailing panel that would otherwise leave one column short.
+ */
+export function TileWide({ children }: { children: ReactNode }) {
+  return <div className="lg:[column-span:all]">{children}</div>;
+}
+
 export function SectionTitle({
   title,
   hint,

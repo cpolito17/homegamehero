@@ -6,7 +6,16 @@ import { PlayersEditor } from '@/components/PlayersEditor';
 import { TournamentPanel } from '@/components/TournamentPanel';
 import { Play } from '@phosphor-icons/react';
 import { ActionBar } from '@/components/ActionBar';
-import { ActionButton, Card, Field, NumberInput, SectionTitle, Segmented } from '@/components/Ui';
+import {
+  ActionButton,
+  Card,
+  Field,
+  NumberInput,
+  SectionTitle,
+  Segmented,
+  TileGrid,
+  TileWide,
+} from '@/components/Ui';
 import { formatMoney, parseCount } from '@/lib/money';
 import { rememberPlayers } from '@/lib/storage';
 import type { GameFormat } from '@/lib/types';
@@ -45,7 +54,8 @@ export function PreGame() {
   };
 
   return (
-    <div className="space-y-4 pb-36">
+    <>
+      <TileGrid className="pb-36">
       <Card>
         <SectionTitle title="Format" hint="This changes how the night ends, so set it first." />
 
@@ -112,7 +122,11 @@ export function PreGame() {
       <ChipSetEditor />
       <PlayersEditor />
       {isTournament ? <TournamentPanel /> : <BlindsPanel />}
-      <DistributionPanel />
+      <TileWide>
+        <DistributionPanel />
+      </TileWide>
+
+      </TileGrid>
 
       <ActionBar
         note={
@@ -125,6 +139,6 @@ export function PreGame() {
           Start game
         </ActionButton>
       </ActionBar>
-    </div>
+    </>
   );
 }

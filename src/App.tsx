@@ -37,11 +37,10 @@ function Shell() {
         exit: { opacity: 0, x: direction * -22 },
       };
 
-  // The game phase carries a reference rail beside the main column.
-  const wide = state.phase === 'game';
-
   return (
-    <div className={`mx-auto min-h-full w-full px-4 ${wide ? 'max-w-2xl lg:max-w-[64rem]' : 'max-w-2xl'}`}>
+    // One width for every phase, so switching tabs never resizes the shell
+    // underneath you. Narrow screens keep the single reading column.
+    <div className="mx-auto min-h-full w-full max-w-2xl px-4 lg:max-w-[64rem]">
       <header className="pt-5">
         <div className="mb-3 flex items-center gap-3">
           <img src="/icon.svg" alt="" className="h-9 w-9 rounded-inner" aria-hidden />

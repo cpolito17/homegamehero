@@ -15,6 +15,7 @@ import {
   SectionTitle,
   Segmented,
   Stat,
+  TileGrid,
 } from '@/components/Ui';
 import { moneyIn, moneyOut, totalMoneyIn } from '@/lib/ledger';
 import { computeCashPayout, computePrizes, finishOrderFrom, POT_ID } from '@/lib/payout';
@@ -60,7 +61,8 @@ function CashPayout() {
   const balanced = result.deltaCents === 0;
 
   return (
-    <div className="space-y-4 pb-36">
+    <>
+      <TileGrid className="pb-36">
       <Card>
         <SectionTitle
           title="Count the chips"
@@ -281,6 +283,8 @@ function CashPayout() {
         </>
       )}
 
+      </TileGrid>
+
       <FinishBar
         summaryPlayers={result.lines.map((line) => ({
           name: state.players.find((p) => p.id === line.playerId)?.name ?? 'Player',
@@ -290,7 +294,7 @@ function CashPayout() {
         potCents={result.potCents}
         disabled={!anyCounted}
       />
-    </div>
+    </>
   );
 }
 
@@ -320,7 +324,8 @@ function TournamentPayout() {
   const stillIn = state.players.filter((p) => !state.eliminations.includes(p.id));
 
   return (
-    <div className="space-y-4 pb-36">
+    <>
+      <TileGrid className="pb-36">
       <Card>
         <SectionTitle title="Prize pool" hint="Every entry, rebuy, and add-on logged tonight." />
         <div className="grid grid-cols-3 gap-2">
@@ -374,6 +379,8 @@ function TournamentPayout() {
         <Notices notices={notices} className="mt-3" />
       </Card>
 
+      </TileGrid>
+
       <FinishBar
         summaryPlayers={state.players.map((player) => {
           const place = finishOrder.indexOf(player.id) + 1;
@@ -387,7 +394,7 @@ function TournamentPayout() {
         potCents={poolCents}
         disabled={notices.some((n) => n.level === 'error')}
       />
-    </div>
+    </>
   );
 }
 
