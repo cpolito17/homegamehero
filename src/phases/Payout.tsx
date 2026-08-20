@@ -87,7 +87,7 @@ function CashPayout() {
             const units = payoutUnitsFor(state, player.id);
             const isOpen = expanded === player.id;
             return (
-              <div key={player.id} className="rounded-control border border-white/5 bg-white/[.02] p-3">
+              <div key={player.id} className="rounded-control border border-line/5 bg-raise/[.02] p-3">
                 <div className="flex items-center justify-between gap-3">
                   <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink-100">
                     {player.name}
@@ -114,7 +114,7 @@ function CashPayout() {
                       aria-expanded={isOpen}
                       aria-label={`Count ${player.name}'s chips`}
                     >
-                      <span className="num font-semibold text-gold-400">
+                      <span className="num font-semibold text-money-400">
                         {formatUnits(units, state.scale)}
                       </span>
                       <m.span
@@ -129,7 +129,7 @@ function CashPayout() {
                 </div>
 
                 {state.payout.entryMode === 'chips' && isOpen && (
-                  <div className="mt-3 border-t border-white/[.06] pt-3">
+                  <div className="mt-3 border-t border-line/[.06] pt-3">
                     <ChipCountEntry
                       chipSet={state.chipSet}
                       scale={state.scale}
@@ -204,13 +204,13 @@ function CashPayout() {
                 return (
                   <div
                     key={line.playerId}
-                    className="flex items-center justify-between gap-3 rounded-control border border-white/5 bg-white/[.02] px-3 py-2.5"
+                    className="flex items-center justify-between gap-3 rounded-control border border-line/5 bg-raise/[.02] px-3 py-2.5"
                   >
                     <div className="min-w-0">
                       <div className="truncate text-sm font-semibold text-ink-100">
                         {player?.name}
                         {line.settled && (
-                          <span className="ml-2 text-[10px] font-bold uppercase text-gold-400">
+                          <span className="ml-2 text-[10px] font-bold uppercase text-money-400">
                             left early
                           </span>
                         )}
@@ -226,7 +226,7 @@ function CashPayout() {
                       <div
                         className={`num text-xs font-semibold ${
                           line.netCents > 0
-                            ? 'text-felt-300'
+                            ? 'text-money-300'
                             : line.netCents < 0
                               ? 'text-red-300'
                               : 'text-ink-500'
@@ -260,7 +260,7 @@ function CashPayout() {
                   return (
                     <li
                       key={i}
-                      className="flex items-center gap-2 rounded-control border border-white/5 bg-white/[.02] px-3 py-2.5 text-sm"
+                      className="flex items-center gap-2 rounded-control border border-line/5 bg-raise/[.02] px-3 py-2.5 text-sm"
                     >
                       <span className="min-w-0 flex-1 truncate font-medium text-ink-100">
                         {from?.name}
@@ -271,7 +271,7 @@ function CashPayout() {
                       <span className="min-w-0 flex-1 truncate font-medium text-ink-100">
                         {to?.name}
                       </span>
-                      <span className="num shrink-0 font-bold text-gold-400">
+                      <span className="num shrink-0 font-bold text-money-400">
                         {formatMoney(transfer.cents)}
                       </span>
                     </li>
@@ -347,7 +347,7 @@ function TournamentPayout() {
               return (
                 <li
                   key={playerId}
-                  className="flex items-center gap-3 rounded-control border border-white/5 bg-white/[.02] px-3 py-2.5"
+                  className="flex items-center gap-3 rounded-control border border-line/5 bg-raise/[.02] px-3 py-2.5"
                 >
                   <span className="num w-8 shrink-0 text-sm font-bold text-ink-400">
                     {index + 1}
@@ -356,7 +356,7 @@ function TournamentPayout() {
                   <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink-100">
                     {player?.name ?? 'Unknown'}
                   </span>
-                  <span className="num shrink-0 text-base font-bold text-gold-400">
+                  <span className="num shrink-0 text-base font-bold text-money-400">
                     {prize ? formatMoney(prize.cents) : ''}
                   </span>
                 </li>

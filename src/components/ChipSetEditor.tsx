@@ -93,7 +93,7 @@ export function ChipSetEditor() {
         />
       </Field>
 
-      <div className="mt-4 border-t border-white/5 pt-3">
+      <div className="mt-4 border-t border-line/5 pt-3">
         <Toggle
           checked={state.chipSet.hasPrintedValues}
           onChange={(hasPrintedValues) =>
@@ -213,14 +213,14 @@ export function ChipSetEditor() {
       </div>
 
       {saved.length > 0 && (
-        <div className="mt-4 border-t border-white/5 pt-3">
+        <div className="mt-4 border-t border-line/5 pt-3">
           <span className="label">Saved sets</span>
           <div className="flex flex-wrap gap-2">
             {saved.map((entry) => (
-              <span key={entry.id} className="inline-flex items-center overflow-hidden rounded-inner border border-white/10">
+              <span key={entry.id} className="inline-flex items-center overflow-hidden rounded-inner border border-line/10">
                 <button
                   type="button"
-                  className="px-2.5 py-1.5 text-xs text-ink-200 transition hover:bg-white/5"
+                  className="px-2.5 py-1.5 text-xs text-ink-200 transition hover:bg-raise/5"
                   onClick={() => loadSet(entry)}
                 >
                   {entry.name}

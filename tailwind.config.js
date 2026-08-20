@@ -1,43 +1,27 @@
+/** Builds a Tailwind colour scale whose every step reads from a CSS variable. */
+function rampVar(name, steps) {
+  return Object.fromEntries(
+    steps.map((step) => [step, `rgb(var(--${name}-${step}) / <alpha-value>)`]),
+  );
+}
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        felt: {
-          50: '#eefbf3',
-          100: '#d6f5e2',
-          200: '#b0e9c9',
-          300: '#7bd7a8',
-          400: '#43bd83',
-          500: '#1a8655',
-          600: '#17774b',
-          700: '#0f6845',
-          800: '#0f5238',
-          900: '#0d4430',
-          950: '#04261b',
-        },
-        ink: {
-          50: '#f6f7f9',
-          100: '#ebeef2',
-          200: '#d3dae3',
-          300: '#adbacb',
-          400: '#8195ae',
-          500: '#7388a4',
-          600: '#4d5f7b',
-          700: '#3f4d64',
-          800: '#374254',
-          900: '#313a48',
-          950: '#12161d',
-          975: '#0b0e13',
-        },
-        gold: {
-          300: '#f7d774',
-          400: '#f0c33f',
-          500: '#e0a91b',
-          600: '#c18512',
-          700: '#9a6112',
-        },
+        // Every scale resolves through a CSS variable so one set of class names
+        // serves both themes. Light and dark are defined in index.css.
+        accent: rampVar('accent', [100, 300, 400, 500, 600, 700]),
+        money: rampVar('money', [300, 400, 500, 600]),
+        ink: rampVar('ink', [50, 100, 200, 300, 400, 500, 600, 900, 950, 975]),
+        red: rampVar('red', [100, 200, 300, 400, 500, 600]),
+        // Overlay tints. `raise` lifts a surface off the one behind it, `line`
+        // draws its edge. Both flip polarity between themes: white on dark,
+        // deep ink on light.
+        raise: 'rgb(var(--raise) / <alpha-value>)',
+        line: 'rgb(var(--line) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['"Geist Variable"', 'system-ui', '-apple-system', 'sans-serif'],

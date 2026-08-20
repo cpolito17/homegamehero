@@ -2,6 +2,7 @@
 import { useRef } from 'react';
 import { AnimatePresence, LazyMotion, domAnimation, m, useReducedMotion } from 'motion/react';
 import { Segmented } from '@/components/Ui';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Game } from '@/phases/Game';
 import { Payout } from '@/phases/Payout';
 import { PreGame } from '@/phases/PreGame';
@@ -54,9 +55,10 @@ function Shell() {
               aria-label="Game name"
             />
           </div>
-          <span className="type-label shrink-0 rounded-full px-2.5 py-1 text-[0.6875rem] font-medium text-ink-400 outline outline-1 -outline-offset-1 outline-white/10">
+          <span className="type-label shrink-0 rounded-full px-2.5 py-1 text-[0.6875rem] font-medium text-ink-400 outline outline-1 -outline-offset-1 outline-line/15">
             {state.format === 'cash' ? 'Cash' : 'Tournament'}
           </span>
+          <ThemeToggle />
         </div>
       </header>
 

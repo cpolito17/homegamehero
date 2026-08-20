@@ -83,7 +83,7 @@ export function SnapshotPanel() {
                 return (
                   <details
                     key={player.id}
-                    className="group rounded-control border border-white/5 bg-white/[.02] px-3 py-2"
+                    className="group rounded-control border border-line/5 bg-raise/[.02] px-3 py-2"
                   >
                     <summary className="flex cursor-pointer items-center justify-between gap-2 text-sm marker:content-['']">
                       <span className="min-w-0 truncate font-medium text-ink-100">
@@ -93,7 +93,7 @@ export function SnapshotPanel() {
                         {formatUnits(units, state.scale)}
                       </span>
                     </summary>
-                    <div className="mt-2 border-t border-white/5 pt-2">
+                    <div className="mt-2 border-t border-line/5 pt-2">
                       <ChipCountEntry
                         chipSet={state.chipSet}
                         scale={state.scale}
@@ -140,7 +140,7 @@ export function SnapshotPanel() {
           {snapshots.map((snap) => {
             const total = Object.values(snap.totals).reduce((s, v) => s + v, 0);
             return (
-              <li key={snap.id} className="rounded-control border border-white/5 bg-white/[.02] p-3">
+              <li key={snap.id} className="rounded-control border border-line/5 bg-raise/[.02] p-3">
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="min-w-0 truncate text-sm font-semibold text-ink-100">
                     {snap.label}
@@ -177,7 +177,7 @@ export function SnapshotPanel() {
                     })}
                 </ul>
 
-                <div className="mt-2 flex items-baseline justify-between gap-2 border-t border-white/5 pt-2 text-xs">
+                <div className="mt-2 flex items-baseline justify-between gap-2 border-t border-line/5 pt-2 text-xs">
                   <ConfirmButton
                     className="rounded px-1.5 py-0.5 text-ink-600 transition hover:bg-red-500/15 hover:text-red-300"
                     confirmLabel="✓"

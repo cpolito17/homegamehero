@@ -10,10 +10,10 @@ const hex = (h) => [
   parseInt(h.slice(5, 7), 16),
 ];
 
-const FELT = hex('#0d4430');
-const DARK = hex('#12161d');
-const GOLD = hex('#e0a91b');
-const GOLD_LT = hex('#f0c33f');
+const PLATE = hex('#dff1f1');
+const DARK = hex('#102024');
+const RED = hex('#ff0000');
+const RED_LT = hex('#ff0000');
 
 // Signed-distance style sampling in a normalized [-256, 256] space.
 function sample(x, y, maskable) {
@@ -21,7 +21,7 @@ function sample(x, y, maskable) {
   const px = x * inset;
   const py = y * inset;
   const r = Math.hypot(px, py);
-  const bg = maskable ? FELT : null;
+  const bg = maskable ? PLATE : null;
 
   // Rounded-rect plate (only for the non-maskable variant; maskable fills edge to edge).
   if (!maskable) {
@@ -33,9 +33,9 @@ function sample(x, y, maskable) {
     if (outside) return null; // transparent corner
   }
 
-  if (r <= 72 * 1.0 && Math.abs(px) / 62 + Math.abs(py) / 72 <= 1) return GOLD_LT; // pip
-  if (Math.abs(px) / 62 + Math.abs(py) / 72 <= 1) return GOLD_LT;
-  if (r <= 104) return FELT;
+  if (r <= 72 * 1.0 && Math.abs(px) / 62 + Math.abs(py) / 72 <= 1) return RED_LT; // pip
+  if (Math.abs(px) / 62 + Math.abs(py) / 72 <= 1) return RED_LT;
+  if (r <= 104) return PLATE;
 
   // Edge spots: 8 radial notches between r=122 and r=168.
   if (r >= 118 && r <= 172) {
@@ -43,11 +43,11 @@ function sample(x, y, maskable) {
     const seg = Math.round((a / (Math.PI / 4)) * 1) * (Math.PI / 4);
     const d = Math.abs(((a - seg + Math.PI * 3) % (Math.PI / 2)) - Math.PI / 4) - Math.PI / 4;
     // width of the notch in radians shrinks with radius so it reads as a rounded bar
-    if (Math.abs(d) < 0.19) return GOLD;
+    if (Math.abs(d) < 0.19) return RED;
   }
-  if (r >= 154 && r <= 168) return GOLD; // outer ring
+  if (r >= 154 && r <= 168) return RED; // outer ring
   if (r <= 168) return DARK;
-  return bg ?? FELT;
+  return bg ?? PLATE;
 }
 
 function render(size, maskable) {

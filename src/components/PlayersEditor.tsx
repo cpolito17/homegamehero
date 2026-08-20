@@ -79,7 +79,7 @@ export function PlayersEditor() {
               disabled={isTournament}
               className={`!px-2.5 !py-2 text-right !text-sm num ${
                 !isTournament && player.buyInCents !== state.cash.universalBuyInCents
-                  ? '!border-gold-500/40 !text-gold-300'
+                  ? '!border-money-500/40 !text-money-300'
                   : ''
               }`}
               ariaLabel={`${player.name} buy-in`}

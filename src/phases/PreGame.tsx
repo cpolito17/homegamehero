@@ -73,7 +73,7 @@ export function PreGame() {
             : 'Chips are cash, rebuy any time, and everyone counts chips at the end to get paid.'}
         </p>
 
-        <div className="mt-4 border-t border-white/5 pt-4">
+        <div className="mt-4 border-t border-line/5 pt-4">
           <span className="label">What's on the chips</span>
           <Segmented
             value={state.scale.kind}

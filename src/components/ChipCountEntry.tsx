@@ -54,9 +54,9 @@ export function ChipCountEntry({
         ))}
       </div>
 
-      <div className="mt-2.5 flex items-baseline justify-between border-t border-white/5 pt-2.5">
+      <div className="mt-2.5 flex items-baseline justify-between border-t border-line/5 pt-2.5">
         <span className="text-xs text-ink-500">{countChips(counts)} chips</span>
-        <span className="num text-lg font-semibold text-gold-400">{formatUnits(total, scale)}</span>
+        <span className="num text-lg font-semibold text-money-400">{formatUnits(total, scale)}</span>
       </div>
     </div>
   );

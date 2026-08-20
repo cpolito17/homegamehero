@@ -80,7 +80,9 @@ export function TileGrid({
 }) {
   return (
     <div
-      className={`space-y-4 lg:columns-2 lg:gap-5 lg:space-y-0 lg:[&>*]:mb-5 lg:[&>*]:break-inside-avoid ${className}`}
+      // space-y is not usable here: it sets margin-bottom as well as margin-top,
+      // so zeroing it for the column layout also wipes the gap between tiles.
+      className={`[&>*]:mb-4 lg:columns-2 lg:gap-5 lg:[&>*]:mb-5 lg:[&>*]:break-inside-avoid ${className}`}
     >
       {children}
     </div>
@@ -246,13 +248,13 @@ export function Segmented<T extends string>({
   return (
     <div
       role="tablist"
-      className={`relative flex rounded-control bg-black/30 p-1 outline outline-1 -outline-offset-1 outline-white/[.06] ${className}`}
+      className={`relative flex rounded-control track p-1 outline outline-1 -outline-offset-1 outline-line/[.06] ${className}`}
     >
       {/* One object that travels between positions, rather than a highlight
           blinking off one item and on to the next. */}
       <m.span
         aria-hidden
-        className="absolute inset-y-1 left-1 rounded-inner bg-felt-500 shadow-[inset_0_1px_0_rgba(255,255,255,.18)]"
+        className="absolute inset-y-1 left-1 rounded-inner bg-accent-500 shadow-[inset_0_1px_0_rgba(255,255,255,.18)]"
         style={{ width: `calc((100% - 0.5rem) / ${count})` }}
         animate={{ x: `${index * 100}%` }}
         transition={reduced ? { duration: 0 } : SPRING.move}
@@ -312,7 +314,7 @@ export function Toggle({
         aria-label={label}
         onClick={() => onChange(!checked)}
         className={`relative mt-0.5 h-[26px] w-[46px] shrink-0 rounded-full transition-colors duration-300 ease-standard ${
-          checked ? 'bg-felt-500' : 'bg-white/[.09]'
+          checked ? 'bg-accent-500' : 'bg-raise/[.09]'
         }`}
       >
         <m.span
@@ -339,11 +341,11 @@ export function Stepper({
   label?: string;
 }) {
   return (
-    <div className="flex items-center gap-1 rounded-full bg-black/30 p-1 outline outline-1 -outline-offset-1 outline-white/[.06]">
+    <div className="flex items-center gap-1 rounded-full track p-1 outline outline-1 -outline-offset-1 outline-line/[.06]">
       <Pressable
         depth="sm"
         feedback="select"
-        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-300 transition-colors duration-200 ease-standard hover:bg-white/[.07] disabled:opacity-30"
+        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-300 transition-colors duration-200 ease-standard hover:bg-raise/[.07] disabled:opacity-30"
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
         aria-label={`Fewer ${label ?? 'items'}`}
@@ -354,7 +356,7 @@ export function Stepper({
       <Pressable
         depth="sm"
         feedback="select"
-        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-300 transition-colors duration-200 ease-standard hover:bg-white/[.07] disabled:opacity-30"
+        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-300 transition-colors duration-200 ease-standard hover:bg-raise/[.07] disabled:opacity-30"
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
         aria-label={`More ${label ?? 'items'}`}
@@ -365,10 +367,13 @@ export function Stepper({
   );
 }
 
+/* Severity runs teal to red. Red is the brand accent as well, so it is kept for
+   the two levels that actually mean something is wrong and never for a value's
+   sign: a player who won must not be painted the colour of a loss. */
 const NOTICE_STYLE: Record<Notice['level'], { box: string; glyph: typeof Info }> = {
-  info: { box: 'bg-felt-500/[.09] text-felt-100 outline-felt-500/25', glyph: Info },
-  warn: { box: 'bg-gold-500/[.09] text-gold-300 outline-gold-500/30', glyph: Warning },
-  error: { box: 'bg-red-500/[.09] text-red-200 outline-red-500/30', glyph: WarningOctagon },
+  info: { box: 'bg-money-500/[.09] text-money-300 outline-money-500/25', glyph: Info },
+  warn: { box: 'bg-accent-500/[.09] text-accent-300 outline-accent-500/30', glyph: Warning },
+  error: { box: 'bg-red-500/[.14] text-red-300 outline-red-500/40', glyph: WarningOctagon },
 };
 
 export function Notices({ notices, className = '' }: { notices: Notice[]; className?: string }) {
@@ -427,15 +432,15 @@ export function Stat({
 }) {
   const toneClass =
     tone === 'good'
-      ? 'text-felt-300'
+      ? 'text-money-300'
       : tone === 'bad'
         ? 'text-red-300'
         : tone === 'money'
-          ? 'text-gold-400'
+          ? 'text-money-400'
           : 'text-ink-50';
   if (row) {
     return (
-      <div className="flex min-w-0 items-baseline justify-between gap-3 rounded-control bg-white/[.025] px-3 py-2 outline outline-1 -outline-offset-1 outline-white/[.045]">
+      <div className="flex min-w-0 items-baseline justify-between gap-3 rounded-control bg-raise/[.025] px-3 py-2 outline outline-1 -outline-offset-1 outline-line/[.045]">
         <span className="type-label min-w-0 truncate text-xs font-medium text-ink-500">{label}</span>
         <span
           className={`type-title shrink-0 whitespace-nowrap text-[0.9375rem] font-semibold tabular-nums ${
@@ -449,7 +454,7 @@ export function Stat({
   }
 
   return (
-    <div className="min-w-0 rounded-control bg-white/[.025] px-3 py-2.5 outline outline-1 -outline-offset-1 outline-white/[.045]">
+    <div className="min-w-0 rounded-control bg-raise/[.025] px-3 py-2.5 outline outline-1 -outline-offset-1 outline-line/[.045]">
       <div className="type-label truncate text-xs font-medium text-ink-500">{label}</div>
       <div
         className={`type-title mt-1 truncate text-[1.0625rem] font-semibold tabular-nums ${
@@ -465,7 +470,7 @@ export function Stat({
 
 export function EmptyState({ title, hint }: { title: string; hint?: string }) {
   return (
-    <div className="rounded-control px-4 py-8 text-center outline-dashed outline-1 -outline-offset-1 outline-white/[.09]">
+    <div className="rounded-control px-4 py-8 text-center outline-dashed outline-1 -outline-offset-1 outline-line/[.09]">
       <p className="text-sm font-medium text-ink-300">{title}</p>
       {hint && <p className="type-body mx-auto mt-1.5 max-w-sm text-xs text-ink-500">{hint}</p>}
     </div>

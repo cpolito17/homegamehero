@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="HomeGameHero">
-  <rect width="512" height="512" rx="112" fill="#0d4430"/>
+  <rect width="512" height="512" rx="112" fill="#dff1f1"/>
   <g transform="translate(256 256)">
     <circle r="172" fill="#e0a91b"/>
-    <circle r="154" fill="#12161d"/>
-    <g fill="#e0a91b">
+    <circle r="154" fill="#102024"/>
+    <g fill="#ff0000">
       <g id="s"><rect x="-30" y="-174" width="60" height="60" rx="8"/></g>
       <use href="#s" transform="rotate(45)"/>
       <use href="#s" transform="rotate(90)"/>
@@ -13,7 +13,7 @@
       <use href="#s" transform="rotate(270)"/>
       <use href="#s" transform="rotate(315)"/>
     </g>
-    <circle r="104" fill="#0d4430"/>
-    <path d="M0-72 62 0 0 72-62 0Z" fill="#f0c33f"/>
+    <circle r="104" fill="#dff1f1"/>
+    <path d="M0-72 62 0 0 72-62 0Z" fill="#ff0000"/>
   </g>
 </svg>

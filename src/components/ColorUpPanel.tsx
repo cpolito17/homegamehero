@@ -39,7 +39,7 @@ export function ColorUpPanel() {
   const anyEntered = players.some((p) => (holdings[p.id] ?? 0) > 0);
 
   return (
-    <Card className="!border-gold-500/25">
+    <Card className="!border-money-500/25">
       <SectionTitle
         title="Time to colour up"
         hint={suggestion.reason}
@@ -71,7 +71,7 @@ export function ColorUpPanel() {
       </div>
 
       {open && (
-        <div className="mt-4 border-t border-white/[.06] pt-4">
+        <div className="mt-4 border-t border-line/[.06] pt-4">
           <span className="label">
             {suggestion.retire.label} chips in front of each player
           </span>
@@ -94,18 +94,18 @@ export function ColorUpPanel() {
                     className="num w-16 shrink-0 !px-2 !py-2 text-right !text-base"
                     ariaLabel={`${player.name} chips to race`}
                   />
-                  <span className="num w-24 shrink-0 text-right text-sm font-semibold text-felt-300">
+                  <span className="num w-24 shrink-0 text-right text-sm font-semibold text-money-300">
                     {line && line.awarded > 0
                       ? `+${line.awarded} ${suggestion.into.label.toLowerCase()}`
                       : ''}
-                    {line?.rescued && <span className="ml-1 text-[10px] text-gold-400">kept</span>}
+                    {line?.rescued && <span className="ml-1 text-[10px] text-money-400">kept</span>}
                   </span>
                 </div>
               );
             })}
           </div>
 
-          <div className="mt-3 border-t border-white/5 pt-3">
+          <div className="mt-3 border-t border-line/5 pt-3">
             <Toggle
               checked={protectShort}
               onChange={setProtectShort}

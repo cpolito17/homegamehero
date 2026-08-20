@@ -41,15 +41,15 @@ export function LevelSchedule({
                 key={level.index}
                 onClick={onPick ? () => onPick(index) : undefined}
                 className={[
-                  'border-t border-white/5',
-                  onPick ? 'cursor-pointer hover:bg-white/5' : '',
-                  isCurrent ? 'bg-felt-600/20' : '',
-                  level.isBreak ? 'text-gold-400' : 'text-ink-200',
+                  'border-t border-line/5',
+                  onPick ? 'cursor-pointer hover:bg-raise/5' : '',
+                  isCurrent ? 'bg-accent-600/20' : '',
+                  level.isBreak ? 'text-money-400' : 'text-ink-200',
                 ].join(' ')}
               >
                 <td className="py-1.5 pr-2 font-medium">
                   {level.isBreak ? 'Break' : playNumber}
-                  {isCurrent && <span className="ml-1.5 text-[10px] text-felt-300">NOW</span>}
+                  {isCurrent && <span className="ml-1.5 text-[10px] text-accent-300">NOW</span>}
                 </td>
                 <td className="num py-1.5 pr-2 text-right">
                   {level.isBreak

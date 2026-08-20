@@ -71,7 +71,7 @@ export function DistributionPanel() {
       />
       <p className="mt-2 text-xs leading-snug text-ink-500">{activeMode.blurb}</p>
 
-      <div className="mt-4 flex items-center justify-between gap-4 border-t border-white/5 pt-3">
+      <div className="mt-4 flex items-center justify-between gap-4 border-t border-line/5 pt-3">
         <div className="min-w-0">
           <span className="block text-sm font-medium text-ink-100">Hold back for rebuys</span>
           <span className="mt-0.5 block text-xs leading-snug text-ink-400">
@@ -108,7 +108,7 @@ export function DistributionPanel() {
               return (
                 <div
                   key={stack.playerId}
-                  className="rounded-control border border-white/5 bg-white/[.02] p-3"
+                  className="rounded-control border border-line/5 bg-raise/[.02] p-3"
                 >
                   <div className="mb-2 flex items-baseline justify-between gap-3">
                     <span className="truncate text-sm font-semibold text-ink-100">
@@ -149,7 +149,7 @@ export function DistributionPanel() {
           </div>
 
           {countChips(result.reserve) > 0 && (
-            <div className="mt-3 rounded-control border border-white/5 bg-white/[.02] p-3">
+            <div className="mt-3 rounded-control border border-line/5 bg-raise/[.02] p-3">
               <span className="label">Set aside for rebuys</span>
               <ChipStackView counts={result.reserve} chipSet={state.chipSet} scale={state.scale} />
             </div>

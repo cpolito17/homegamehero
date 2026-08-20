@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
-    <meta name="theme-color" content="#0b0e13" />
+    <meta name="theme-color" content="#dff1f1" />
     <meta name="description" content="Chip distribution, blind structures, and payout math for home poker games. Works offline." />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -11,6 +11,25 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <title>HomeGameHero</title>
+    <script>
+      // Set the theme before first paint. Doing this in React would flash the
+      // wrong palette for a frame on every load.
+      (function () {
+        try {
+          var stored = localStorage.getItem('hgh.theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.dataset.theme = theme;
+          document
+            .querySelector('meta[name="theme-color"]')
+            .setAttribute('content', theme === 'dark' ? '#0b1417' : '#dff1f1');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

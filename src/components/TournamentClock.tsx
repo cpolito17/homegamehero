@@ -71,7 +71,7 @@ export function TournamentClock() {
     <ShellCard coreClassName="">
       <div
         className={`px-4 pb-5 pt-6 text-center transition-colors duration-500 ease-standard sm:px-5 ${
-          level.isBreak ? 'bg-gold-500/[.07]' : urgent ? 'bg-red-500/[.07]' : ''
+          level.isBreak ? 'bg-money-500/[.07]' : urgent ? 'bg-red-500/[.07]' : ''
         }`}
       >
         <div className="type-label text-xs font-medium text-ink-400">
@@ -87,10 +87,10 @@ export function TournamentClock() {
         </div>
 
         {!level.isBreak && (
-          <div className="num type-title mt-3 text-2xl font-semibold text-felt-300">
+          <div className="num type-title mt-3 text-2xl font-semibold text-money-300">
             {formatUnits(level.smallBlind, state.scale)} / {formatUnits(level.bigBlind, state.scale)}
             {level.ante > 0 && (
-              <span className="ml-2 text-base font-medium text-gold-400">
+              <span className="ml-2 text-base font-medium text-money-400">
                 ante {formatUnits(level.ante, state.scale)}
               </span>
             )}
@@ -107,11 +107,11 @@ export function TournamentClock() {
         )}
       </div>
 
-      <div className="grid grid-cols-4 border-y border-white/[.06] bg-black/20">
+      <div className="grid grid-cols-4 border-y border-line/[.06] track">
         <Pressable
           depth="lg"
           feedback="select"
-          className="flex items-center justify-center border-r border-white/[.06] py-3.5 text-ink-400 transition-colors duration-200 ease-standard hover:bg-white/[.04] hover:text-ink-100 disabled:opacity-25"
+          className="flex items-center justify-center border-r border-line/[.06] py-3.5 text-ink-400 transition-colors duration-200 ease-standard hover:bg-raise/[.04] hover:text-ink-100 disabled:opacity-25"
           onClick={() => dispatch({ type: 'clockGoto', index: state.clock.levelIndex - 1 })}
           disabled={state.clock.levelIndex === 0}
           aria-label="Previous level"
@@ -124,8 +124,8 @@ export function TournamentClock() {
           feedback="commit"
           className={`col-span-2 flex items-center justify-center gap-2 py-3.5 text-sm font-semibold transition-colors duration-200 ease-standard ${
             running
-              ? 'text-ink-200 hover:bg-white/[.04]'
-              : 'bg-felt-500 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.18)] hover:bg-felt-600'
+              ? 'text-ink-200 hover:bg-raise/[.04]'
+              : 'bg-accent-500 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.18)] hover:bg-accent-600'
           }`}
           onClick={() => {
             unlock();
@@ -139,7 +139,7 @@ export function TournamentClock() {
         <Pressable
           depth="lg"
           feedback="select"
-          className="flex items-center justify-center border-l border-white/[.06] py-3.5 text-ink-400 transition-colors duration-200 ease-standard hover:bg-white/[.04] hover:text-ink-100 disabled:opacity-25"
+          className="flex items-center justify-center border-l border-line/[.06] py-3.5 text-ink-400 transition-colors duration-200 ease-standard hover:bg-raise/[.04] hover:text-ink-100 disabled:opacity-25"
           onClick={() => dispatch({ type: 'clockGoto', index: state.clock.levelIndex + 1 })}
           disabled={state.clock.levelIndex >= levels.length - 1}
           aria-label="Next level"
@@ -193,7 +193,7 @@ export function TournamentClock() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
             transition={SPRING.sheet}
-            className="overflow-hidden border-t border-white/[.06]"
+            className="overflow-hidden border-t border-line/[.06]"
           >
             <div className="px-4 py-3 sm:px-5">
               <LevelSchedule

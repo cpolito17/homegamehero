@@ -43,7 +43,7 @@ export function PrizeSplitEditor({
         <span className="label !mb-0">Payout split</span>
         <span
           className={`num text-sm font-semibold ${
-            rounded === 100 ? 'text-felt-300' : 'text-red-300'
+            rounded === 100 ? 'text-money-300' : 'text-red-300'
           }`}
         >
           {rounded}%
@@ -65,7 +65,7 @@ export function PrizeSplitEditor({
                 step={1}
                 value={slot.percent}
                 onChange={(e) => setPercent(slot.place, Number(e.target.value))}
-                className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-ink-800 accent-felt-400"
+                className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-ink-800 accent-accent-400"
                 aria-label={`Place ${slot.place} percentage`}
               />
               <input
@@ -78,7 +78,7 @@ export function PrizeSplitEditor({
                 aria-label={`Place ${slot.place} percentage value`}
               />
             </div>
-            <span className="num text-right text-sm font-semibold text-gold-400">
+            <span className="num text-right text-sm font-semibold text-money-400">
               {formatMoney(amounts[i] ?? 0)}
             </span>
           </div>

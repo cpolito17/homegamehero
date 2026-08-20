@@ -58,10 +58,10 @@ export function BankPanel() {
             <div key={color.id} className="flex items-center gap-2">
               <ChipDot hex={color.hex} size={16} />
               <span className="w-16 shrink-0 truncate text-xs text-ink-400">{color.label}</span>
-              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-900">
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full track">
                 <div
                   className={`h-full rounded-full transition-all ${
-                    remaining < 0 ? 'bg-red-500' : pct < 0.15 ? 'bg-gold-500' : 'bg-felt-500'
+                    remaining < 0 ? 'bg-red-600' : pct < 0.15 ? 'bg-accent-400' : 'bg-money-500'
                   }`}
                   style={{ width: `${Math.min(100, Math.max(0, pct * 100))}%` }}
                 />
@@ -87,7 +87,7 @@ export function BankPanel() {
       )}
 
       {showLedger && (
-        <div className="mt-4 border-t border-white/5 pt-3">
+        <div className="mt-4 border-t border-line/5 pt-3">
           {state.ledger.length === 0 ? (
             <p className="text-sm text-ink-500">Nothing logged yet.</p>
           ) : (
@@ -108,7 +108,7 @@ export function BankPanel() {
                       </span>
                       <span className="flex shrink-0 items-center gap-2">
                         <span
-                          className={`num ${entry.kind === 'cashout' ? 'text-red-300' : 'text-felt-300'}`}
+                          className={`num ${entry.kind === 'cashout' ? 'text-red-300' : 'text-money-300'}`}
                         >
                           {entry.kind === 'cashout' ? '−' : '+'}
                           {formatMoney(entry.amountCents)}

@@ -145,7 +145,7 @@ export function TournamentPanel() {
         </div>
 
         {showSchedule && (
-          <div className="mt-3 border-t border-white/5 pt-3">
+          <div className="mt-3 border-t border-line/5 pt-3">
             <LevelSchedule levels={t.levels} scale={state.scale} />
           </div>
         )}

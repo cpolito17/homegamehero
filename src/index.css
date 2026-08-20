@@ -9,8 +9,70 @@
 @tailwind utilities;
 
 @layer base {
+  /* ---- Palette -------------------------------------------------------------
+     Four colours were given: #F5F5F5, #DFF1F1, #BBD5DA and #FF0000. They cover
+     page, surface, edge and accent, but none of them is a text colour, so the
+     ink ramp is derived at the same hue as #BBD5DA (~190deg) rather than pulled
+     from an unrelated neutral.
+
+     Pure #FF0000 carries only 3.6:1 against a near-white page and 4.0:1 under
+     white text, both short of AA for body copy. It is kept for the marks that
+     need no contrast promise (rings, bars, indicators) and a slightly deeper
+     red does the work wherever text is involved.
+
+     In dark mode the three light palette colours become the text ramp, so the
+     same four values describe both themes. */
   :root {
-    color-scheme: dark;
+    color-scheme: light;
+
+    --ink-50: 16 32 36;
+    --ink-100: 22 41 46;
+    --ink-200: 34 56 62;
+    --ink-300: 51 80 87;
+    --ink-400: 63 95 103;
+    --ink-500: 78 110 118;
+    --ink-600: 90 120 127;
+    --ink-900: 245 245 245;
+    --ink-950: 255 255 255;
+    --ink-975: 223 241 241;
+
+    --accent-100: 255 235 235;
+    --accent-300: 193 0 0;
+    --accent-400: 255 0 0;
+    --accent-500: 214 0 0;
+    --accent-600: 173 0 0;
+    --accent-700: 122 0 0;
+
+    --money-300: 11 90 99;
+    --money-400: 14 110 120;
+    --money-500: 17 130 142;
+    --money-600: 10 78 86;
+
+    --red-100: 255 240 240;
+    --red-200: 168 0 0;
+    --red-300: 193 0 0;
+    --red-400: 214 0 0;
+    --red-500: 255 0 0;
+    --red-600: 173 0 0;
+
+    --raise: 17 90 100;
+    --line: 30 74 82;
+    --track: 120 158 166;
+    --track-a: 0.34;
+    --edge: 187 213 218;
+    --edge-a: 1;
+
+    --page-wash: 17 130 142;
+    --page-wash-a: 0.1;
+    --chrome: 223 241 241;
+    --chrome-a: 0.78;
+    --panel-bg: 255 255 255;
+    --panel-a: 1;
+    --core-bg: 255 255 255;
+    --field-bg: 255 255 255;
+    --shadow-a: 0.1;
+    --btn-ink: 255 255 255;
+
     --safe-b: env(safe-area-inset-bottom, 0px);
 
     /* Radius system. Containers nest concentrically: a core inside a shell with
@@ -33,6 +95,58 @@
     --mat-sat: 180%;
   }
 
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+
+    --ink-50: 245 245 245;
+    --ink-100: 223 241 241;
+    --ink-200: 201 224 229;
+    --ink-300: 176 206 212;
+    --ink-400: 169 192 198;
+    --ink-500: 147 173 180;
+    --ink-600: 126 151 158;
+    --ink-900: 22 40 45;
+    --ink-950: 16 30 34;
+    --ink-975: 11 20 23;
+
+    --accent-100: 255 214 214;
+    --accent-300: 255 82 82;
+    --accent-400: 255 0 0;
+    --accent-500: 214 0 0;
+    --accent-600: 173 0 0;
+    --accent-700: 122 0 0;
+
+    --money-300: 122 214 224;
+    --money-400: 95 200 212;
+    --money-500: 60 170 184;
+    --money-600: 40 140 152;
+
+    --red-100: 255 224 224;
+    --red-200: 255 176 176;
+    --red-300: 255 122 122;
+    --red-400: 255 82 82;
+    --red-500: 255 0 0;
+    --red-600: 214 0 0;
+
+    --raise: 255 255 255;
+    --line: 255 255 255;
+    --track: 0 0 0;
+    --track-a: 0.3;
+    --edge: 255 255 255;
+    --edge-a: 0.06;
+
+    --page-wash: 60 170 184;
+    --page-wash-a: 0.1;
+    --chrome: 11 20 23;
+    --chrome-a: 0.72;
+    --panel-bg: 16 30 34;
+    --panel-a: 0.66;
+    --core-bg: 13 25 29;
+    --field-bg: 8 16 19;
+    --shadow-a: 0.5;
+    --btn-ink: 255 255 255;
+  }
+
   html,
   body,
   #root {
@@ -45,7 +159,7 @@
     /* A single low, wide light source behind the page. Not a gradient blob. */
     background-image: radial-gradient(
       140% 90% at 50% -20%,
-      rgb(18 130 83 / 0.13),
+      rgb(var(--page-wash) / var(--page-wash-a)),
       transparent 62%
     );
     background-attachment: fixed;
@@ -63,7 +177,7 @@
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-felt-400/80 ring-offset-2 ring-offset-ink-975;
+    @apply outline-none ring-2 ring-accent-400/80 ring-offset-2 ring-offset-ink-975;
   }
 
   /* Tracking is size-specific. Large type reads too loose as it grows, small
@@ -91,7 +205,7 @@
      Chrome is a translucent layer that content scrolls beneath, not an opaque
      strip that eats a fixed band of the viewport. */
   .material {
-    background: rgb(11 14 19 / 0.72);
+    background: rgb(var(--chrome) / var(--chrome-a));
     backdrop-filter: blur(var(--mat-blur)) saturate(var(--mat-sat));
     -webkit-backdrop-filter: blur(var(--mat-blur)) saturate(var(--mat-sat));
   }
@@ -107,7 +221,7 @@
     top: 100%;
     height: 1.25rem;
     pointer-events: none;
-    background: linear-gradient(to bottom, rgb(11 14 19 / 0.72), transparent);
+    background: linear-gradient(to bottom, rgb(var(--chrome) / var(--chrome-a)), transparent);
   }
   .edge-scrim-up::before {
     content: '';
@@ -117,7 +231,7 @@
     bottom: 100%;
     height: 1.5rem;
     pointer-events: none;
-    background: linear-gradient(to top, rgb(11 14 19 / 0.72), transparent);
+    background: linear-gradient(to top, rgb(var(--chrome) / var(--chrome-a)), transparent);
   }
 
   /* ---- Surfaces -----------------------------------------------------------
@@ -126,30 +240,31 @@
      the clock, the stacks, the final payout. Heavier material, more presence. */
   .panel {
     border-radius: var(--r-shell);
-    background: rgb(18 22 29 / 0.66);
+    background: rgb(var(--panel-bg) / var(--panel-a));
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.055),
-      0 1px 2px rgb(0 0 0 / 0.35),
-      0 12px 32px -20px rgb(0 0 0 / 0.7);
-    outline: 1px solid rgb(255 255 255 / 0.055);
+      inset 0 1px 0 rgb(var(--raise) / 0.055),
+      0 1px 2px rgb(0 0 0 / calc(var(--shadow-a) * 0.5)),
+      0 12px 32px -20px rgb(0 0 0 / var(--shadow-a));
+    /* The given #BBD5DA reads as the card edge in light, a hairline in dark. */
+    outline: 1px solid rgb(var(--edge) / var(--edge-a, 1));
     outline-offset: -1px;
   }
 
   .shell {
     border-radius: var(--r-shell);
     padding: 6px;
-    background: rgb(255 255 255 / 0.032);
-    outline: 1px solid rgb(255 255 255 / 0.07);
+    background: rgb(var(--raise) / 0.032);
+    outline: 1px solid rgb(var(--edge) / var(--edge-a, 1));
     outline-offset: -1px;
-    box-shadow: 0 20px 48px -28px rgb(0 0 0 / 0.85);
+    box-shadow: 0 20px 48px -28px rgb(0 0 0 / calc(var(--shadow-a) * 1.2));
   }
 
   .core {
     border-radius: var(--r-core);
-    background: rgb(14 18 24 / 0.9);
+    background: rgb(var(--core-bg) / 0.9);
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.075),
-      inset 0 -1px 0 rgb(0 0 0 / 0.35);
+      inset 0 1px 0 rgb(var(--raise) / 0.075),
+      inset 0 -1px 0 rgb(0 0 0 / calc(var(--shadow-a) * 0.7));
   }
 
   /* ---- Controls ---------------------------------------------------------- */
@@ -157,15 +272,15 @@
     @apply w-full text-base text-ink-50 placeholder:text-ink-500;
     border-radius: var(--r-control);
     padding: 0.625rem 0.75rem;
-    background: rgb(8 11 15 / 0.75);
-    outline: 1px solid rgb(255 255 255 / 0.08);
+    background: rgb(var(--field-bg) / 0.75);
+    outline: 1px solid rgb(var(--line) / 0.16);
     outline-offset: -1px;
     transition:
       outline-color var(--dur-move) var(--ease-standard),
       background-color var(--dur-move) var(--ease-standard);
   }
   .field:focus {
-    background: rgb(8 11 15 / 0.95);
+    background: rgb(var(--field-bg) / 0.95);
     outline-color: theme('colors.felt.500');
   }
   .field:disabled {
@@ -187,31 +302,34 @@
       outline-color var(--dur-move) var(--ease-standard);
   }
   .btn-primary {
-    @apply btn bg-felt-500 text-white;
+    @apply btn bg-accent-500;
+    color: rgb(var(--btn-ink));
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.2),
-      0 1px 2px rgb(4 38 27 / 0.6);
+      0 1px 2px rgb(0 0 0 / calc(var(--shadow-a) * 0.6));
   }
   .btn-primary:hover {
-    @apply bg-felt-600;
+    @apply bg-accent-600;
   }
   .btn-ghost {
     @apply btn text-ink-200;
-    background: rgb(255 255 255 / 0.045);
-    outline: 1px solid rgb(255 255 255 / 0.08);
+    background: rgb(var(--raise) / 0.045);
+    outline: 1px solid rgb(var(--line) / 0.16);
     outline-offset: -1px;
   }
   .btn-ghost:hover {
-    background: rgb(255 255 255 / 0.085);
+    background: rgb(var(--raise) / 0.085);
   }
+  /* Red is the accent now, so danger cannot lean on colour alone: it stays an
+     outlined tint while the primary action is a solid fill. */
   .btn-danger {
     @apply btn text-red-300;
-    background: rgb(239 68 68 / 0.11);
-    outline: 1px solid rgb(239 68 68 / 0.24);
+    background: rgb(var(--red-500) / 0.11);
+    outline: 1px solid rgb(var(--red-500) / 0.32);
     outline-offset: -1px;
   }
   .btn-danger:hover {
-    background: rgb(239 68 68 / 0.19);
+    background: rgb(var(--red-500) / 0.19);
   }
 
   /* The trailing glyph on a primary action sits in its own well, flush with the
@@ -226,8 +344,15 @@
     @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold
            tabular-nums;
     box-shadow:
-      inset 0 0 0 1.5px rgb(255 255 255 / 0.16),
-      0 1px 2px rgb(0 0 0 / 0.4);
+      inset 0 0 0 1.5px rgb(var(--raise) / 0.16),
+      0 1px 2px rgb(0 0 0 / calc(var(--shadow-a) * 0.6));
+  }
+
+  /* Inset well behind a control: a segmented track, a stepper, a meter. Dark
+     needs a hole punched in the surface, light needs a tint laid on it, so it
+     cannot be one literal colour. */
+  .track {
+    background: rgb(var(--track) / var(--track-a));
   }
 
   .num {
@@ -259,31 +384,31 @@
 
 @media (prefers-reduced-transparency: reduce) {
   .material {
-    background: rgb(11 14 19 / 0.98);
+    background: rgb(var(--chrome));
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
   .panel {
-    background: rgb(18 22 29 / 0.99);
+    background: rgb(var(--panel-bg));
   }
   .core {
-    background: rgb(14 18 24 / 1);
+    background: rgb(var(--core-bg));
   }
   .field {
-    background: rgb(8 11 15 / 1);
+    background: rgb(var(--field-bg));
   }
 }
 
 @media (prefers-contrast: more) {
   .panel,
   .shell {
-    outline-color: rgb(255 255 255 / 0.3);
+    outline-color: rgb(var(--line) / 0.45);
   }
   .field {
-    outline-color: rgb(255 255 255 / 0.38);
+    outline-color: rgb(var(--line) / 0.55);
   }
   .btn-ghost {
-    outline-color: rgb(255 255 255 / 0.38);
+    outline-color: rgb(var(--line) / 0.55);
     color: theme('colors.ink.50');
   }
   .label {
