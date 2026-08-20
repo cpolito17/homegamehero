@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-ink-975 text-ink-100 antialiased;
+    background-image: radial-gradient(
+      120% 80% at 50% -10%,
+      rgba(18, 130, 83, 0.16),
+      transparent 60%
+    );
+    background-attachment: fixed;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+
+  /* Numeric inputs: strip spinners, they are useless on a phone. */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-felt-400 ring-offset-2 ring-offset-ink-975;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-white/5 bg-ink-950/70 shadow-card backdrop-blur-sm;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-white/10 bg-ink-975/80 px-3 py-2.5 text-base
+           text-ink-50 placeholder:text-ink-500 transition
+           focus:border-felt-500 focus:bg-ink-975;
+  }
+
+  .label {
+    @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-ink-400;
+  }
+
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5
+           text-sm font-semibold transition active:scale-[.98] disabled:pointer-events-none
+           disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply btn bg-felt-500 text-white shadow-lg shadow-felt-950/40 hover:bg-felt-400;
+  }
+  .btn-ghost {
+    @apply btn border border-white/10 bg-white/[.03] text-ink-200 hover:bg-white/[.07];
+  }
+  .btn-danger {
+    @apply btn border border-red-500/25 bg-red-500/10 text-red-300 hover:bg-red-500/20;
+  }
+  .btn-gold {
+    @apply btn bg-gold-500 text-ink-975 hover:bg-gold-400;
+  }
+
+  .chip-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold
+           tabular-nums shadow-chip;
+  }
+
+  .seg {
+    @apply flex rounded-xl border border-white/10 bg-ink-975/60 p-1;
+  }
+  .seg-item {
+    @apply flex-1 rounded-lg px-3 py-2 text-center text-sm font-medium text-ink-400
+           transition active:scale-[.98];
+  }
+  .seg-item-active {
+    @apply bg-felt-600 text-white shadow;
+  }
+
+  .num {
+    @apply font-mono tabular-nums;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "homegamehero",
+  "compatibility_date": "2025-01-01",
+  // Static-asset-only Worker: there is no server-side code, all state lives in the
+  // browser. `not_found_handling` serves the SPA shell for client-side routes.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
