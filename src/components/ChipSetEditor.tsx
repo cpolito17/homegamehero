@@ -13,6 +13,9 @@ import type { SavedChipSet } from '@/lib/types';
 import { useDispatch, useGameState } from '@/state/store';
 import { stackUnitsFor } from '@/state/reducer';
 import { Card, ConfirmButton, Field, NumberInput, Notices, SectionTitle, Stat, TextInput, Toggle } from './Ui';
+import { Check, X } from '@phosphor-icons/react';
+import { Icon } from './Icon';
+import { Pressable } from './Pressable';
 import { ChipDot } from './Chips';
 
 export function ChipSetEditor() {
@@ -100,13 +103,13 @@ export function ChipSetEditor() {
           hint={
             state.chipSet.hasPrintedValues
               ? 'Type in what each chip says. Leave a colour blank and it gets a value assigned around the printed ones.'
-              : 'Blank chips. Values get assigned by colour — smallest value goes to whichever colour you own the most of.'
+              : 'Blank chips. Values get assigned by colour, smallest going to whichever colour you own the most of.'
           }
         />
       </div>
 
       <div className="mt-4 space-y-2">
-        <div className="grid grid-cols-[auto_1fr_4.5rem_5.5rem_auto] items-center gap-2 px-1 text-[11px] font-medium uppercase tracking-wider text-ink-500">
+        <div className="grid grid-cols-[auto_1fr_4.5rem_5.5rem_auto] items-center gap-2 px-1 text-xs font-medium text-ink-500">
           <span className="w-6" />
           <span>Colour</span>
           <span className="text-right">Have</span>
@@ -166,19 +169,19 @@ export function ChipSetEditor() {
               }
               parse={(raw) => (raw.trim() === '' ? 0 : parseUnits(raw, state.scale))}
               format={(v) => (v > 0 ? formatUnits(v, state.scale) : '')}
-              placeholder={state.scale.kind === 'dollar' ? '$—' : '—'}
+              placeholder={state.scale.kind === 'dollar' ? '$0' : '0'}
               className="!px-2.5 !py-2 text-right !text-sm num"
               ariaLabel={`${color.label} value`}
             />
 
-            <button
-              type="button"
-              className="h-7 w-7 rounded-lg text-ink-500 transition hover:bg-red-500/15 hover:text-red-300"
+            <Pressable
+              depth="sm"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition-colors duration-200 ease-standard hover:bg-red-500/15 hover:text-red-300"
               onClick={() => dispatch({ type: 'removeColor', id: color.id })}
               aria-label={`Remove ${color.label}`}
             >
-              ×
-            </button>
+              <Icon as={X} size={15} />
+            </Pressable>
           </div>
         ))}
 
@@ -204,9 +207,9 @@ export function ChipSetEditor() {
       <Notices notices={assignNotices} className="mt-3" />
 
       <div className="mt-4 grid grid-cols-3 gap-2">
-        <Stat label="Chips" value={totalChips.toLocaleString('en-US')} />
-        <Stat label="Total value" value={formatUnits(totalValue, state.scale)} tone="gold" />
-        <Stat label="Denominations" value={priced} />
+        <Stat label="Chips" mono value={totalChips.toLocaleString('en-US')} />
+        <Stat label="Total value" mono value={formatUnits(totalValue, state.scale)} tone="money" />
+        <Stat label="Denominations" mono value={priced} />
       </div>
 
       {saved.length > 0 && (
@@ -214,7 +217,7 @@ export function ChipSetEditor() {
           <span className="label">Saved sets</span>
           <div className="flex flex-wrap gap-2">
             {saved.map((entry) => (
-              <span key={entry.id} className="inline-flex items-center overflow-hidden rounded-lg border border-white/10">
+              <span key={entry.id} className="inline-flex items-center overflow-hidden rounded-inner border border-white/10">
                 <button
                   type="button"
                   className="px-2.5 py-1.5 text-xs text-ink-200 transition hover:bg-white/5"
@@ -223,11 +226,11 @@ export function ChipSetEditor() {
                   {entry.name}
                 </button>
                 <ConfirmButton
-                  className="px-2 py-1.5 text-xs text-ink-500 transition hover:bg-red-500/15 hover:text-red-300"
-                  confirmLabel="✓"
+                  className="flex items-center px-2 py-1.5 text-xs text-ink-500 transition-colors duration-200 ease-standard hover:bg-red-500/15 hover:text-red-300"
+                  confirmLabel={<Icon as={Check} size={14} />}
                   onConfirm={() => removeSaved(entry.id)}
                 >
-                  ×
+                  <Icon as={X} size={14} />
                 </ConfirmButton>
               </span>
             ))}

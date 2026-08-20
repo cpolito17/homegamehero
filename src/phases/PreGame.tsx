@@ -4,7 +4,9 @@ import { ChipSetEditor } from '@/components/ChipSetEditor';
 import { DistributionPanel } from '@/components/DistributionPanel';
 import { PlayersEditor } from '@/components/PlayersEditor';
 import { TournamentPanel } from '@/components/TournamentPanel';
-import { Card, Field, NumberInput, SectionTitle, Segmented } from '@/components/Ui';
+import { Play } from '@phosphor-icons/react';
+import { ActionBar } from '@/components/ActionBar';
+import { ActionButton, Card, Field, NumberInput, SectionTitle, Segmented } from '@/components/Ui';
 import { formatMoney, parseCount } from '@/lib/money';
 import { rememberPlayers } from '@/lib/storage';
 import type { GameFormat } from '@/lib/types';
@@ -43,7 +45,7 @@ export function PreGame() {
   };
 
   return (
-    <div className="space-y-4 pb-28">
+    <div className="space-y-4 pb-36">
       <Card>
         <SectionTitle title="Format" hint="This changes how the night ends, so set it first." />
 
@@ -112,25 +114,17 @@ export function PreGame() {
       {isTournament ? <TournamentPanel /> : <BlindsPanel />}
       <DistributionPanel />
 
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/5 bg-ink-975/90 px-4 pb-[calc(0.75rem+var(--safe-b))] pt-3 backdrop-blur">
-        <div className="mx-auto flex max-w-2xl items-center gap-3">
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-xs text-ink-400">
-              {state.distribution
-                ? 'Stacks ready — hand them out and start the game.'
-                : 'Calculate stacks first, or start now and sort chips yourself.'}
-            </p>
-          </div>
-          <button
-            type="button"
-            className="btn-primary shrink-0 !py-3 !px-6"
-            disabled={!canStart}
-            onClick={startGame}
-          >
-            Start game
-          </button>
-        </div>
-      </div>
+      <ActionBar
+        note={
+          state.distribution
+            ? 'Stacks ready. Hand them out and start the game.'
+            : 'Calculate stacks first, or start now and sort the chips yourself.'
+        }
+      >
+        <ActionButton onClick={startGame} disabled={!canStart} glyph={Play}>
+          Start game
+        </ActionButton>
+      </ActionBar>
     </div>
   );
 }

@@ -2,6 +2,9 @@ import { useMemo, useState } from 'react';
 import { formatMoney, parseMoney } from '@/lib/money';
 import { loadRoster } from '@/lib/storage';
 import { useDispatch, useGameState } from '@/state/store';
+import { X } from '@phosphor-icons/react';
+import { Icon } from './Icon';
+import { Pressable } from './Pressable';
 import { Card, EmptyState, Field, NumberInput, SectionTitle, Stat, TextInput } from './Ui';
 
 export function PlayersEditor() {
@@ -82,14 +85,14 @@ export function PlayersEditor() {
               ariaLabel={`${player.name} buy-in`}
             />
 
-            <button
-              type="button"
-              className="h-7 w-7 rounded-lg text-ink-500 transition hover:bg-red-500/15 hover:text-red-300"
+            <Pressable
+              depth="sm"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition-colors duration-200 ease-standard hover:bg-red-500/15 hover:text-red-300"
               onClick={() => dispatch({ type: 'removePlayer', id: player.id })}
               aria-label={`Remove ${player.name}`}
             >
-              ×
-            </button>
+              <Icon as={X} size={15} />
+            </Pressable>
           </div>
         ))}
 
@@ -117,11 +120,11 @@ export function PlayersEditor() {
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-2">
-        <Stat label="Players" value={state.players.length} />
+        <Stat label="Players" mono value={state.players.length} />
         <Stat
-          label="Money on the table"
+          label="Money on the table" mono
           value={formatMoney(pot)}
-          tone="gold"
+          tone="money"
           sub={unequal ? 'Uneven buy-ins' : undefined}
         />
       </div>

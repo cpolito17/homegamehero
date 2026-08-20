@@ -57,13 +57,14 @@ export function ChipStackView({
   counts,
   chipSet,
   scale,
-  showTotal = true,
+  summary = 'full',
   emptyLabel = 'No chips',
 }: {
   counts: ChipCount;
   chipSet: ChipSet;
   scale: ChipScale;
-  showTotal?: boolean;
+  /** 'full' adds the value and the count, 'count' just the count, 'none' neither. */
+  summary?: 'full' | 'count' | 'none';
   emptyLabel?: string;
 }) {
   const colors = activeColors(chipSet).filter((c) => (counts[c.id] ?? 0) > 0);
@@ -80,12 +81,14 @@ export function ChipStackView({
           count={counts[color.id] ?? 0}
         />
       ))}
-      {showTotal && (
-        <span className="num ml-1 text-sm font-semibold text-ink-200">
-          {formatUnits(countUnits(counts, chipSet), scale)}
-          <span className="ml-1 text-xs font-normal text-ink-500">
-            · {countChips(counts)} chips
-          </span>
+      {summary !== 'none' && (
+        <span className="ml-1 flex items-baseline gap-2">
+          {summary === 'full' && (
+            <span className="num text-sm font-semibold text-ink-200">
+              {formatUnits(countUnits(counts, chipSet), scale)}
+            </span>
+          )}
+          <span className="text-xs text-ink-500">{countChips(counts)} chips</span>
         </span>
       )}
     </div>

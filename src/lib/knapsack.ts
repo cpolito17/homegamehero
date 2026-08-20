@@ -4,7 +4,7 @@
  * Making a stack worth exactly the buy-in out of a limited box of chips is a
  * bounded knapsack with an equality constraint. The counts are small and the
  * values share a large common factor, so a DP over the reduced amount is both
- * exact and fast — no heuristics, no "close enough" stacks.
+ * exact and fast, with no heuristics and no "close enough" stacks.
  */
 
 export interface FillItem {
@@ -83,7 +83,7 @@ function greedy(target: number, items: FillItem[], objective: 'min' | 'max'): Fi
  * `objective` decides the shape of the stack when several fit: 'min' uses the
  * fewest chips (preserving the box), 'max' uses the most (a tall stack).
  *
- * When the target is unreachable — wrong multiple, or not enough chips — this
+ * When the target is unreachable, whether from a wrong multiple or too few chips, this
  * returns the closest reachable value *below* it rather than failing, so callers
  * can show the host how far off they are.
  */

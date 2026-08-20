@@ -2,6 +2,9 @@ import { prizeSplitNotices } from '@/lib/payout';
 import { formatMoney } from '@/lib/money';
 import { allocateProportional } from '@/lib/money';
 import type { PrizeSlot } from '@/lib/types';
+import { Minus, Plus } from '@phosphor-icons/react';
+import { Icon } from './Icon';
+import { Pressable } from './Pressable';
 import { Notices } from './Ui';
 
 export function PrizeSplitEditor({
@@ -82,18 +85,21 @@ export function PrizeSplitEditor({
         ))}
       </div>
 
-      <div className="mt-2 flex gap-2">
-        <button type="button" className="btn-ghost !py-1.5 !text-xs" onClick={addPlace}>
-          + Place
-        </button>
-        <button
-          type="button"
+      <div className="mt-2.5 flex gap-2">
+        <Pressable depth="sm" feedback="select" className="btn-ghost !py-1.5 !text-xs" onClick={addPlace}>
+          <Icon as={Plus} size={13} />
+          Place
+        </Pressable>
+        <Pressable
+          depth="sm"
+          feedback="select"
           className="btn-ghost !py-1.5 !text-xs"
           onClick={removePlace}
           disabled={ordered.length <= 1}
         >
-          − Place
-        </button>
+          <Icon as={Minus} size={13} />
+          Place
+        </Pressable>
       </div>
 
       <Notices notices={prizeSplitNotices(ordered)} className="mt-3" />

@@ -191,7 +191,7 @@ export function distribute(input: DistributeInput): DistributionResult {
 
     let result = buildStack(target, fairItems, input.mode, input.smallBlind, input.bigBlind);
 
-    // Fair share was too tight to hit the number exactly — let this stack reach
+    // Fair share was too tight to hit the number exactly, so let this stack reach
     // into what's actually left rather than handing out a wrong stack.
     if (!result.exact) {
       const greedyItems: FillItem[] = values.map((value, i) => ({ value, cap: remaining[i]! }));
@@ -229,7 +229,7 @@ export function distribute(input: DistributeInput): DistributionResult {
   for (let i = 0; i < reserveCount; i++) {
     const solved = solveOne(standard);
     if (!solved.exact) {
-      // Put the chips back — a partial reserve stack isn't a rebuy.
+      // Put the chips back: a partial reserve stack isn't a rebuy.
       solved.counts.forEach((n, idx) => {
         remaining[idx] = remaining[idx]! + n;
       });
@@ -280,7 +280,7 @@ export function distribute(input: DistributeInput): DistributionResult {
   if (avgChips > 0 && avgChips < 15) {
     notices.push({
       level: 'info',
-      message: `About ${Math.round(avgChips)} chips per stack. That's thin — try the Deep stack profile or add a smaller denomination.`,
+      message: `About ${Math.round(avgChips)} chips per stack. That's thin. Try the Deep stack profile, or add a smaller denomination.`,
     });
   }
 

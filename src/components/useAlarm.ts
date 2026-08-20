@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
  * Level-change alert.
  *
  * Browsers only allow audio after a user gesture, so the context is created
- * lazily on the first tap — which in practice is the host pressing Start.
+ * lazily on the first tap, which in practice is the host pressing Start.
  */
 export function useAlarm() {
   const contextRef = useRef<AudioContext | null>(null);

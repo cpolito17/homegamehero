@@ -178,8 +178,8 @@ export type AssignStrategy = 'quantity' | 'convention';
  * Fills in values for blank chips.
  *
  * 'quantity' is the one that matters: the smallest denomination goes to whichever
- * colour the host owns the most of. Getting this backwards — putting the $1 value
- * on the stack of 20 chips — is how a chip set runs out mid-game.
+ * colour the host owns the most of. Getting this backwards, and putting the $1
+ * value on the stack of 20 chips, is how a chip set runs out mid-game.
  */
 export function assignValues(
   chipSet: ChipSet,
@@ -221,7 +221,7 @@ export function assignValues(
         level: 'warn',
         message: `No standard value for ${unmatched
           .map((c) => c.label)
-          .join(', ')} — set ${unmatched.length === 1 ? 'it' : 'them'} by hand.`,
+          .join(', ')}. Set ${unmatched.length === 1 ? 'it' : 'them'} by hand.`,
       });
     }
   } else {
@@ -245,7 +245,7 @@ export function assignValues(
         level: 'info',
         message: `${unused
           .map((c) => c.label)
-          .join(', ')} left out — this buy-in doesn't need that many denominations. Keep them for a bigger game.`,
+          .join(', ')} left out. This buy-in doesn't need that many denominations, so keep them for a bigger game.`,
       });
     }
   }
@@ -259,7 +259,7 @@ export function assignValues(
   if (absent.length) {
     notices.push({
       level: 'info',
-      message: `${absent.map((c) => c.label).join(', ')} skipped — quantity is zero.`,
+      message: `${absent.map((c) => c.label).join(', ')} skipped, because the quantity is zero.`,
     });
   }
 
@@ -303,7 +303,7 @@ export function checkFeasibility(input: FeasibilityInput): Notice[] {
   if (unmakeable.length) {
     notices.push({
       level: 'error',
-      message: `Some buy-ins can't be made exactly from your chips — every stack has to be a multiple of your smallest common value.`,
+      message: `Some buy-ins can't be made exactly from your chips. Every stack has to be a multiple of your smallest common value.`,
     });
   }
 

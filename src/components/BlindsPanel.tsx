@@ -61,7 +61,7 @@ export function BlindsPanel() {
     <Card>
       <SectionTitle
         title="Blinds"
-        hint="Set by how deep the stacks are, not by the size of the pot — a 50 big blind stack plays the same with three people or nine."
+        hint="Set by how deep the stacks are, not by the size of the pot. A 50 big blind stack plays the same with three people or nine."
         action={
           !state.cash.blindsAuto && (
             <button
@@ -87,7 +87,7 @@ export function BlindsPanel() {
       <span className="label">Starting depth</span>
       <Segmented
         value={String(state.cash.depthTargetBB) as '100' | '50' | '30'}
-        options={DEPTH_PRESETS.map((p) => ({ value: p.value, label: `${p.label} · ${p.hint}` }))}
+        options={DEPTH_PRESETS.map((p) => ({ value: p.value, label: p.label }))}
         onChange={(value) =>
           dispatch({
             type: 'patchCash',
@@ -95,6 +95,10 @@ export function BlindsPanel() {
           })
         }
       />
+
+      <p className="type-body mt-2 text-xs text-ink-500">
+        Aiming for a {state.cash.depthTargetBB} big blind starting stack.
+      </p>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
         <Field label="Small blind">
@@ -118,18 +122,18 @@ export function BlindsPanel() {
       </div>
 
       <p className="mt-2 text-xs text-ink-500">
-        Edits snap to {formatUnits(step, state.scale)} — the smallest chip you can actually put in
+        Edits snap to {formatUnits(step, state.scale)}, the smallest chip you can actually put in
         the middle.
       </p>
 
       <div className="mt-4 grid grid-cols-2 gap-2">
         <Stat
-          label="Starting depth"
+          label="Starting depth" mono
           value={`${depth > 0 ? Math.round(depth) : 0} bb`}
-          tone={depth < 25 ? 'bad' : depth > 150 ? 'gold' : 'good'}
+          tone={depth < 25 ? 'bad' : depth > 150 ? 'default' : 'good'}
         />
         <Stat
-          label="An orbit costs"
+          label="An orbit costs" mono
           value={formatUnits(state.cash.smallBlind + state.cash.bigBlind, state.scale)}
         />
       </div>

@@ -21,7 +21,7 @@ const MANTISSAS = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8];
  * Nearest human-looking number (25, 50, 100, 150…) that is still payable.
  *
  * Only round mantissas are candidates. Snapping the raw value to the grain as
- * well would always win on distance and defeat the point — that is how you end
+ * well would always win on distance and defeat the point. That is how you end
  * up announcing blinds of 95 and 575.
  */
 export function niceRound(value: number, grain: number): number {
@@ -80,7 +80,7 @@ const MULTIPLIERS = [
 /**
  * Recommends blinds from stack depth, not from the size of the pot.
  *
- * In a cash game the pot doesn't set the stakes — the starting stack does. A
+ * In a cash game the pot doesn't set the stakes, the starting stack does. A
  * 50 big blind stack plays the same whether two people or nine are sitting down.
  * Player count only matters for whether the chips go around, which the
  * distribution solver handles separately.
@@ -143,7 +143,7 @@ export function recommendCashBlinds(opts: {
   if (depthBB < 25) {
     notices.push({
       level: 'warn',
-      message: `${Math.round(depthBB)} big blinds is shallow — expect a lot of all-ins preflop. Raise the buy-in or add a smaller chip.`,
+      message: `${Math.round(depthBB)} big blinds is shallow. Expect a lot of all-ins preflop, or raise the buy-in and add a smaller chip.`,
     });
   } else if (depthBB > 150) {
     notices.push({

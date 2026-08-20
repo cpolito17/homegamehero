@@ -38,9 +38,9 @@ export function BankPanel() {
       />
 
       <div className="grid grid-cols-3 gap-2">
-        <Stat label="Paid in" value={formatMoney(inCents)} />
-        <Stat label="Paid out" value={formatMoney(outCents)} />
-        <Stat label="On the table" value={formatMoney(onTable)} tone="gold" />
+        <Stat label="Paid in" mono value={formatMoney(inCents)} />
+        <Stat label="Paid out" mono value={formatMoney(outCents)} />
+        <Stat label="On the table" mono value={formatMoney(onTable)} tone="money" />
       </div>
 
       <div className="mt-3 space-y-1.5">
@@ -72,7 +72,7 @@ export function BankPanel() {
       </div>
 
       {shortages.length > 0 && (
-        <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+        <p className="mt-3 rounded-control border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
           You've handed out more {shortages.map((c) => c.label.toLowerCase()).join(', ')} chips than
           you own. Someone's rebuy came out of thin air.
         </p>

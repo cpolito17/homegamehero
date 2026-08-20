@@ -10,8 +10,8 @@ export default {
           200: '#b0e9c9',
           300: '#7bd7a8',
           400: '#43bd83',
-          500: '#1fa267',
-          600: '#128253',
+          500: '#1a8655',
+          600: '#17774b',
           700: '#0f6845',
           800: '#0f5238',
           900: '#0d4430',
@@ -23,7 +23,7 @@ export default {
           200: '#d3dae3',
           300: '#adbacb',
           400: '#8195ae',
-          500: '#617795',
+          500: '#7388a4',
           600: '#4d5f7b',
           700: '#3f4d64',
           800: '#374254',
@@ -40,26 +40,30 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['"Inter var"', 'Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        sans: ['"Geist Variable"', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"Geist Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+      },
+      borderRadius: {
+        shell: 'var(--r-shell)',
+        core: 'var(--r-core)',
+        control: 'var(--r-control)',
+        inner: 'var(--r-inner)',
+      },
+      transitionTimingFunction: {
+        standard: 'cubic-bezier(0.32, 0.72, 0, 1)',
+        'out-quint': 'cubic-bezier(0.22, 1, 0.36, 1)',
       },
       boxShadow: {
-        chip: '0 1px 2px rgba(0,0,0,.4), inset 0 0 0 2px rgba(255,255,255,.14)',
-        card: '0 1px 3px rgba(0,0,0,.35), 0 8px 24px -12px rgba(0,0,0,.5)',
+        chip: '0 1px 2px rgba(0,0,0,.4), inset 0 0 0 2px rgba(255,255,255,.16)',
       },
       keyframes: {
-        'slide-up': {
-          from: { opacity: '0', transform: 'translateY(8px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
-        pulseRing: {
+        breathe: {
           '0%,100%': { opacity: '1' },
-          '50%': { opacity: '.35' },
+          '50%': { opacity: '.45' },
         },
       },
       animation: {
-        'slide-up': 'slide-up .18s ease-out',
-        'pulse-ring': 'pulseRing 1.2s ease-in-out infinite',
+        breathe: 'breathe 1.4s cubic-bezier(0.32, 0.72, 0, 1) infinite',
       },
     },
   },

@@ -3,7 +3,7 @@
  *
  * Two rules hold everywhere in this app:
  *   1. Money is an integer number of cents. Floats never touch a dollar amount.
- *   2. "Chip units" are whatever is printed on the chip — cents in dollar mode,
+ *   2. "Chip units" are whatever is printed on the chip: cents in dollar mode,
  *      abstract points in points mode. Conversion to cents happens at exactly one
  *      boundary (`unitsToCents`) so the rest of the code never has to care.
  */

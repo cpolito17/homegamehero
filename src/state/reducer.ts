@@ -136,8 +136,8 @@ export function reducer(state: GameState, action: Action): GameState {
     }
 
     case 'setScale': {
-      // Chip values mean something different in the new scale — 25 cents is not
-      // 25 points — so they can't carry over. Rather than leaving the host with a
+      // Chip values mean something different in the new scale, since 25 cents is
+      // not 25 points, so they can't carry over. Rather than leaving the host with a
       // blank set and no schedule, seed sensible values they can type over.
       const scale = action.scale;
       const buyInCents =

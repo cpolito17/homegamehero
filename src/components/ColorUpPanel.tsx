@@ -3,6 +3,8 @@ import { colorUp, suggestColorUp } from '@/lib/colorup';
 import { formatUnits, parseCount } from '@/lib/money';
 import { currentBlinds } from '@/state/reducer';
 import { useDispatch, useGameState } from '@/state/store';
+import { ArrowRight } from '@phosphor-icons/react';
+import { Icon } from './Icon';
 import { ChipDot } from './Chips';
 import { Card, Notices, NumberInput, SectionTitle, Toggle } from './Ui';
 
@@ -56,7 +58,9 @@ export function ColorUpPanel() {
             {formatUnits(suggestion.retire.value!, state.scale)}
           </span>
         </span>
-        <span className="text-ink-600">→</span>
+        <span className="text-ink-600">
+          <Icon as={ArrowRight} size={15} />
+        </span>
         <span className="flex items-center gap-1.5">
           <ChipDot hex={suggestion.into.hex} size={18} />
           <span className="text-ink-200">{suggestion.into.label}</span>
@@ -67,7 +71,7 @@ export function ColorUpPanel() {
       </div>
 
       {open && (
-        <div className="mt-4 animate-slide-up border-t border-white/5 pt-4">
+        <div className="mt-4 border-t border-white/[.06] pt-4">
           <span className="label">
             {suggestion.retire.label} chips in front of each player
           </span>
@@ -93,7 +97,7 @@ export function ColorUpPanel() {
                   <span className="num w-24 shrink-0 text-right text-sm font-semibold text-felt-300">
                     {line && line.awarded > 0
                       ? `+${line.awarded} ${suggestion.into.label.toLowerCase()}`
-                      : '—'}
+                      : ''}
                     {line?.rescued && <span className="ml-1 text-[10px] text-gold-400">kept</span>}
                   </span>
                 </div>
@@ -116,7 +120,7 @@ export function ColorUpPanel() {
               {result.valueChangeUnits !== 0 && (
                 <p className="mt-2 text-xs text-ink-500">
                   {result.valueChangeUnits < 0
-                    ? `${formatUnits(-result.valueChangeUnits, state.scale)} of odd value leaves play — normal for a race, and less than one chip per player.`
+                    ? `${formatUnits(-result.valueChangeUnits, state.scale)} of odd value leaves play. That is normal for a race, and less than one chip per player.`
                     : `${formatUnits(result.valueChangeUnits, state.scale)} added to keep short stacks alive.`}
                 </p>
               )}

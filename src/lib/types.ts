@@ -98,7 +98,7 @@ export interface TournamentConfig {
   addOnCents: number;
   addOnStackUnits: number;
   levels: BlindLevel[];
-  /** Host-defined payout table. Not auto-generated — must sum to 100%. */
+  /** Host-defined payout table. Not auto-generated, and must sum to 100%. */
   prizeSplit: PrizeSlot[];
   levelsAuto: boolean;
 }

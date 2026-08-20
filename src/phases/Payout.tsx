@@ -1,5 +1,10 @@
 import { useMemo, useState } from 'react';
+import { m } from 'motion/react';
+import { ArrowRight, CaretDown, CaretLeft } from '@phosphor-icons/react';
+import { ActionBar } from '@/components/ActionBar';
 import { ChipCountEntry } from '@/components/ChipCountEntry';
+import { Icon } from '@/components/Icon';
+import { Pressable } from '@/components/Pressable';
 import { PrizeSplitEditor, ordinalSuffix } from '@/components/PrizeSplitEditor';
 import {
   Card,
@@ -14,6 +19,7 @@ import {
 import { moneyIn, moneyOut, totalMoneyIn } from '@/lib/ledger';
 import { computeCashPayout, computePrizes, finishOrderFrom } from '@/lib/payout';
 import { formatMoney, formatSigned, formatUnits, parseUnits } from '@/lib/money';
+import { SPRING } from '@/lib/motion';
 import { pushHistory } from '@/lib/storage';
 import type { Discrepancy } from '@/lib/types';
 import { payoutUnitsFor } from '@/state/reducer';
@@ -54,7 +60,7 @@ function CashPayout() {
   const balanced = result.deltaCents === 0;
 
   return (
-    <div className="space-y-4 pb-28">
+    <div className="space-y-4 pb-36">
       <Card>
         <SectionTitle
           title="Count the chips"
@@ -79,7 +85,7 @@ function CashPayout() {
             const units = payoutUnitsFor(state, player.id);
             const isOpen = expanded === player.id;
             return (
-              <div key={player.id} className="rounded-xl border border-white/5 bg-white/[.02] p-3">
+              <div key={player.id} className="rounded-control border border-white/5 bg-white/[.02] p-3">
                 <div className="flex items-center justify-between gap-3">
                   <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink-100">
                     {player.name}
@@ -98,21 +104,30 @@ function CashPayout() {
                       ariaLabel={`${player.name} total`}
                     />
                   ) : (
-                    <button
-                      type="button"
+                    <Pressable
+                      depth="sm"
+                      feedback="select"
                       className="btn-ghost shrink-0 !py-2 !text-sm"
                       onClick={() => setExpanded(isOpen ? null : player.id)}
+                      aria-expanded={isOpen}
+                      aria-label={`Count ${player.name}'s chips`}
                     >
                       <span className="num font-semibold text-gold-400">
                         {formatUnits(units, state.scale)}
                       </span>
-                      <span className="text-ink-500">{isOpen ? '▴' : '▾'}</span>
-                    </button>
+                      <m.span
+                        className="text-ink-500"
+                        animate={{ rotate: isOpen ? 180 : 0 }}
+                        transition={SPRING.move}
+                      >
+                        <Icon as={CaretDown} size={14} />
+                      </m.span>
+                    </Pressable>
                   )}
                 </div>
 
                 {state.payout.entryMode === 'chips' && isOpen && (
-                  <div className="mt-3 animate-slide-up border-t border-white/5 pt-3">
+                  <div className="mt-3 border-t border-white/[.06] pt-3">
                     <ChipCountEntry
                       chipSet={state.chipSet}
                       scale={state.scale}
@@ -143,10 +158,10 @@ function CashPayout() {
       <Card>
         <SectionTitle title="The count" />
         <div className="grid grid-cols-3 gap-2">
-          <Stat label="Money in" value={formatMoney(result.potCents)} />
-          <Stat label="Chips counted" value={formatMoney(result.countedCents)} />
+          <Stat label="Money in" mono value={formatMoney(result.potCents)} />
+          <Stat label="Chips counted" mono value={formatMoney(result.countedCents)} />
           <Stat
-            label="Difference"
+            label="Difference" mono
             value={balanced ? 'Even' : formatSigned(result.deltaCents)}
             tone={balanced ? 'good' : 'bad'}
           />
@@ -169,7 +184,7 @@ function CashPayout() {
                 ? 'Everyone gets their share of the actual cash, in proportion to their chips. Totals come out even.'
                 : state.payout.resolution === 'accept'
                   ? "Pay exactly what the chips say. You'll be over or under by the difference."
-                  : "Nothing paid out yet — the numbers don't agree. Recount, or pick one of the other two."}
+                  : "Nothing paid out yet, because the numbers don't agree. Recount, or pick one of the other two."}
             </p>
           </div>
         )}
@@ -187,7 +202,7 @@ function CashPayout() {
                 return (
                   <div
                     key={line.playerId}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-white/5 bg-white/[.02] px-3 py-2.5"
+                    className="flex items-center justify-between gap-3 rounded-control border border-white/5 bg-white/[.02] px-3 py-2.5"
                   >
                     <div className="min-w-0">
                       <div className="truncate text-sm font-semibold text-ink-100">
@@ -198,8 +213,8 @@ function CashPayout() {
                           </span>
                         )}
                       </div>
-                      <div className="num text-xs text-ink-500">
-                        in {formatMoney(line.buyInCents)}
+                      <div className="text-xs text-ink-500">
+                        in <span className="num">{formatMoney(line.buyInCents)}</span>
                       </div>
                     </div>
                     <div className="shrink-0 text-right">
@@ -239,12 +254,14 @@ function CashPayout() {
                   return (
                     <li
                       key={i}
-                      className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[.02] px-3 py-2.5 text-sm"
+                      className="flex items-center gap-2 rounded-control border border-white/5 bg-white/[.02] px-3 py-2.5 text-sm"
                     >
                       <span className="min-w-0 flex-1 truncate font-medium text-ink-100">
                         {from?.name}
                       </span>
-                      <span className="shrink-0 text-ink-600">→</span>
+                      <span className="shrink-0 text-ink-600">
+                        <Icon as={ArrowRight} size={14} />
+                      </span>
                       <span className="min-w-0 flex-1 truncate font-medium text-ink-100">
                         {to?.name}
                       </span>
@@ -299,13 +316,13 @@ function TournamentPayout() {
   const stillIn = state.players.filter((p) => !state.eliminations.includes(p.id));
 
   return (
-    <div className="space-y-4 pb-28">
+    <div className="space-y-4 pb-36">
       <Card>
         <SectionTitle title="Prize pool" hint="Every entry, rebuy, and add-on logged tonight." />
         <div className="grid grid-cols-3 gap-2">
-          <Stat label="Pool" value={formatMoney(poolCents)} tone="gold" />
-          <Stat label="Entries" value={state.players.length} />
-          <Stat label="Still in" value={stillIn.length} />
+          <Stat label="Pool" mono value={formatMoney(poolCents)} tone="money" />
+          <Stat label="Entries" mono value={state.players.length} />
+          <Stat label="Still in" mono value={stillIn.length} />
         </div>
       </Card>
 
@@ -321,7 +338,7 @@ function TournamentPayout() {
               return (
                 <li
                   key={playerId}
-                  className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[.02] px-3 py-2.5"
+                  className="flex items-center gap-3 rounded-control border border-white/5 bg-white/[.02] px-3 py-2.5"
                 >
                   <span className="num w-8 shrink-0 text-sm font-bold text-ink-400">
                     {index + 1}
@@ -331,7 +348,7 @@ function TournamentPayout() {
                     {player?.name ?? 'Unknown'}
                   </span>
                   <span className="num shrink-0 text-base font-bold text-gold-400">
-                    {prize ? formatMoney(prize.cents) : '—'}
+                    {prize ? formatMoney(prize.cents) : ''}
                   </span>
                 </li>
               );
@@ -397,28 +414,22 @@ function FinishBar({
   };
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/5 bg-ink-975/90 px-4 pb-[calc(0.75rem+var(--safe-b))] pt-3 backdrop-blur">
-      <div className="mx-auto flex max-w-2xl items-center gap-3">
-        <button
-          type="button"
-          className="btn-ghost shrink-0"
-          onClick={() => dispatch({ type: 'setPhase', phase: 'game' })}
-        >
-          Back
-        </button>
-        <ConfirmButton
-          className="btn-primary flex-1 !py-3 text-base"
-          confirmLabel="Save and start over?"
-          onConfirm={finish}
-        >
-          Finish night
-        </ConfirmButton>
-      </div>
-      {disabled && (
-        <p className="mx-auto mt-2 max-w-2xl text-center text-xs text-ink-500">
-          Sort the numbers above before closing the night out.
-        </p>
-      )}
-    </div>
+    <ActionBar note={disabled ? 'Sort the numbers above before closing the night out.' : undefined}>
+      <Pressable
+        depth="sm"
+        className="btn-ghost shrink-0"
+        onClick={() => dispatch({ type: 'setPhase', phase: 'game' })}
+      >
+        <Icon as={CaretLeft} size={15} />
+        Back
+      </Pressable>
+      <ConfirmButton
+        className="btn-primary flex-1 !py-2.5 text-[0.9375rem]"
+        confirmLabel="Save and start over?"
+        onConfirm={finish}
+      >
+        Finish night
+      </ConfirmButton>
+    </ActionBar>
   );
 }

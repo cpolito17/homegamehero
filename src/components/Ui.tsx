@@ -1,3 +1,4 @@
+'use client';
 import {
   useEffect,
   useId,
@@ -6,16 +7,61 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import {
+  ArrowRight,
+  CheckCircle,
+  Info,
+  Minus,
+  Plus,
+  Warning,
+  WarningOctagon,
+} from '@phosphor-icons/react';
 import type { Notice } from '@/lib/types';
+import { SPRING, haptic, reveal } from '@/lib/motion';
+import { Icon } from './Icon';
+import { Pressable } from './Pressable';
 
+/** Single-layer surface. The default for routine content. */
 export function Card({
   children,
   className = '',
+  index = 0,
 }: {
   children: ReactNode;
   className?: string;
+  index?: number;
 }) {
-  return <section className={`card p-4 sm:p-5 ${className}`}>{children}</section>;
+  const reduced = useReducedMotion();
+  return (
+    <m.section {...reveal(reduced, index)} className={`panel p-4 sm:p-5 ${className}`}>
+      {children}
+    </m.section>
+  );
+}
+
+/**
+ * Nested surface: a core seated inside a shell, curves concentric.
+ * Reserved for the few places that carry the moment, so the extra weight
+ * still means something when it appears.
+ */
+export function ShellCard({
+  children,
+  className = '',
+  coreClassName = '',
+  index = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  coreClassName?: string;
+  index?: number;
+}) {
+  const reduced = useReducedMotion();
+  return (
+    <m.section {...reveal(reduced, index)} className={`shell ${className}`}>
+      <div className={`core overflow-hidden ${coreClassName}`}>{children}</div>
+    </m.section>
+  );
 }
 
 export function SectionTitle({
@@ -30,8 +76,8 @@ export function SectionTitle({
   return (
     <div className="mb-4 flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <h2 className="text-base font-semibold text-ink-50">{title}</h2>
-        {hint && <p className="mt-0.5 text-sm leading-snug text-ink-400">{hint}</p>}
+        <h2 className="type-title text-[0.9375rem] font-semibold text-ink-50">{title}</h2>
+        {hint && <p className="type-body mt-1 text-sm text-ink-400">{hint}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
@@ -51,7 +97,7 @@ export function Field({
     <label className="block">
       <span className="label">{label}</span>
       {children}
-      {hint && <span className="mt-1 block text-xs text-ink-500">{hint}</span>}
+      {hint && <span className="type-body mt-1.5 block text-xs text-ink-500">{hint}</span>}
     </label>
   );
 }
@@ -75,9 +121,7 @@ export function TextInput({ value, onChange, className = '', ...rest }: TextInpu
 interface NumberInputProps {
   value: number;
   onCommit: (value: number) => void;
-  /** Turns the typed string into a number, or null if it isn't valid yet. */
   parse: (raw: string) => number | null;
-  /** Renders the committed value back into the box when it isn't being edited. */
   format: (value: number) => string;
   placeholder?: string;
   className?: string;
@@ -90,9 +134,9 @@ interface NumberInputProps {
 /**
  * A numeric field that lets you type freely.
  *
- * Reformatting mid-keystroke ("2" becoming "$2.00" while you reach for the 5") is
- * the fastest way to make a form unusable, so the raw text is held locally and
- * only normalised once focus leaves.
+ * Reformatting mid-keystroke ("2" becoming "$2.00" while you reach for the 5")
+ * is the fastest way to make a form unusable, so the raw text is held locally
+ * and only normalised once focus leaves.
  */
 export function NumberInput({
   value,
@@ -140,6 +184,14 @@ export function NumberInput({
   );
 }
 
+/**
+ * Segmented control.
+ *
+ * The selection is one object that travels between positions rather than a
+ * highlight that blinks off one item and on to another. Because it is a spring
+ * on a shared layout id, tapping mid-flight redirects it from where it actually
+ * is instead of restarting.
+ */
 export function Segmented<T extends string>({
   value,
   options,
@@ -147,24 +199,53 @@ export function Segmented<T extends string>({
   className = '',
 }: {
   value: T;
-  options: { value: T; label: string; hint?: string }[];
+  options: { value: T; label: string }[];
   onChange: (value: T) => void;
   className?: string;
 }) {
+  const reduced = useReducedMotion();
+  const count = Math.max(1, options.length);
+  const index = Math.max(
+    0,
+    options.findIndex((o) => o.value === value),
+  );
+
   return (
-    <div className={`seg ${className}`} role="tablist">
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          role="tab"
-          aria-selected={value === option.value}
-          className={`seg-item ${value === option.value ? 'seg-item-active' : ''}`}
-          onClick={() => onChange(option.value)}
-        >
-          {option.label}
-        </button>
-      ))}
+    <div
+      role="tablist"
+      className={`relative flex rounded-control bg-black/30 p-1 outline outline-1 -outline-offset-1 outline-white/[.06] ${className}`}
+    >
+      {/* One object that travels between positions, rather than a highlight
+          blinking off one item and on to the next. */}
+      <m.span
+        aria-hidden
+        className="absolute inset-y-1 left-1 rounded-inner bg-felt-500 shadow-[inset_0_1px_0_rgba(255,255,255,.18)]"
+        style={{ width: `calc((100% - 0.5rem) / ${count})` }}
+        animate={{ x: `${index * 100}%` }}
+        transition={reduced ? { duration: 0 } : SPRING.move}
+      />
+      {options.map((option) => {
+        const active = value === option.value;
+        return (
+          <Pressable
+            key={option.value}
+            role="tab"
+            aria-selected={active}
+            depth="sm"
+            feedback="select"
+            onClick={() => onChange(option.value)}
+            className="relative z-10 flex-1 rounded-inner px-2 py-2 text-center text-sm font-medium"
+          >
+            <span
+              className={`transition-colors duration-200 ease-standard ${
+                active ? 'text-white' : 'text-ink-400'
+              }`}
+            >
+              {option.label}
+            </span>
+          </Pressable>
+        );
+      })}
     </div>
   );
 }
@@ -181,28 +262,32 @@ export function Toggle({
   hint?: string;
 }) {
   const id = useId();
+  const reduced = useReducedMotion();
+
   return (
     <div className="flex items-start justify-between gap-4 py-1">
       <label htmlFor={id} className="min-w-0 cursor-pointer">
         <span className="block text-sm font-medium text-ink-100">{label}</span>
-        {hint && <span className="mt-0.5 block text-xs leading-snug text-ink-400">{hint}</span>}
+        {hint && <span className="type-body mt-1 block text-xs text-ink-400">{hint}</span>}
       </label>
-      <button
+      <Pressable
         id={id}
-        type="button"
         role="switch"
+        depth="sm"
+        feedback="select"
         aria-checked={checked}
+        aria-label={label}
         onClick={() => onChange(!checked)}
-        className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition ${
-          checked ? 'bg-felt-500' : 'bg-ink-800'
+        className={`relative mt-0.5 h-[26px] w-[46px] shrink-0 rounded-full transition-colors duration-300 ease-standard ${
+          checked ? 'bg-felt-500' : 'bg-white/[.09]'
         }`}
       >
-        <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
-            checked ? 'left-[22px]' : 'left-0.5'
-          }`}
+        <m.span
+          animate={{ x: checked ? 20 : 0 }}
+          transition={reduced ? { duration: 0 } : SPRING.move}
+          className="absolute left-[3px] top-[3px] h-5 w-5 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,.5)]"
         />
-      </button>
+      </Pressable>
     </div>
   );
 }
@@ -221,63 +306,71 @@ export function Stepper({
   label?: string;
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        className="btn-ghost h-9 w-9 !px-0 text-lg"
+    <div className="flex items-center gap-1 rounded-full bg-black/30 p-1 outline outline-1 -outline-offset-1 outline-white/[.06]">
+      <Pressable
+        depth="sm"
+        feedback="select"
+        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-300 transition-colors duration-200 ease-standard hover:bg-white/[.07] disabled:opacity-30"
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
-        aria-label={`Decrease ${label ?? 'value'}`}
+        aria-label={`Fewer ${label ?? 'items'}`}
       >
-        −
-      </button>
-      <span className="num w-10 text-center text-base font-semibold">{value}</span>
-      <button
-        type="button"
-        className="btn-ghost h-9 w-9 !px-0 text-lg"
+        <Icon as={Minus} size={16} />
+      </Pressable>
+      <span className="num w-8 text-center text-base font-semibold text-ink-50">{value}</span>
+      <Pressable
+        depth="sm"
+        feedback="select"
+        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-300 transition-colors duration-200 ease-standard hover:bg-white/[.07] disabled:opacity-30"
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
-        aria-label={`Increase ${label ?? 'value'}`}
+        aria-label={`More ${label ?? 'items'}`}
       >
-        +
-      </button>
+        <Icon as={Plus} size={16} />
+      </Pressable>
     </div>
   );
 }
 
-const NOTICE_STYLES: Record<Notice['level'], string> = {
-  info: 'border-felt-500/25 bg-felt-500/10 text-felt-100',
-  warn: 'border-gold-500/30 bg-gold-500/10 text-gold-300',
-  error: 'border-red-500/30 bg-red-500/10 text-red-200',
-};
-
-const NOTICE_ICON: Record<Notice['level'], string> = {
-  info: 'i',
-  warn: '!',
-  error: '!',
+const NOTICE_STYLE: Record<Notice['level'], { box: string; glyph: typeof Info }> = {
+  info: { box: 'bg-felt-500/[.09] text-felt-100 outline-felt-500/25', glyph: Info },
+  warn: { box: 'bg-gold-500/[.09] text-gold-300 outline-gold-500/30', glyph: Warning },
+  error: { box: 'bg-red-500/[.09] text-red-200 outline-red-500/30', glyph: WarningOctagon },
 };
 
 export function Notices({ notices, className = '' }: { notices: Notice[]; className?: string }) {
-  if (notices.length === 0) return null;
+  const reduced = useReducedMotion();
+
   return (
-    <ul className={`space-y-2 ${className}`}>
-      {notices.map((notice, i) => (
-        <li
-          key={`${notice.level}-${i}`}
-          className={`flex gap-2.5 rounded-xl border px-3 py-2.5 text-sm leading-snug ${
-            NOTICE_STYLES[notice.level]
-          }`}
+    <AnimatePresence initial={false}>
+      {/* Height is the one non-transform property animated in this app: a
+          disclosure has to push the content below it, and Motion measures the
+          target once rather than on every frame. */}
+      {notices.length > 0 && (
+        <m.ul
+          initial={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+          transition={SPRING.sheet}
+          className={`space-y-2 overflow-hidden ${className}`}
         >
-          <span
-            aria-hidden
-            className="mt-px flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-current text-[10px] font-bold"
-          >
-            {NOTICE_ICON[notice.level]}
-          </span>
-          <span>{notice.message}</span>
-        </li>
-      ))}
-    </ul>
+          {notices.map((notice, i) => {
+            const style = NOTICE_STYLE[notice.level];
+            return (
+              <li
+                key={`${notice.level}-${i}`}
+                className={`type-body flex gap-2.5 rounded-control px-3 py-2.5 text-sm outline outline-1 -outline-offset-1 ${style.box}`}
+              >
+                <span className="mt-px shrink-0">
+                  <Icon as={style.glyph} size={17} />
+                </span>
+                <span>{notice.message}</span>
+              </li>
+            );
+          })}
+        </m.ul>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -286,24 +379,33 @@ export function Stat({
   value,
   sub,
   tone = 'default',
+  mono = false,
 }: {
   label: string;
   value: ReactNode;
   sub?: ReactNode;
-  tone?: 'default' | 'good' | 'bad' | 'gold';
+  tone?: 'default' | 'good' | 'bad' | 'money';
+  /** Set for values that are purely a number or an amount. Words stay in Geist. */
+  mono?: boolean;
 }) {
   const toneClass =
     tone === 'good'
       ? 'text-felt-300'
       : tone === 'bad'
         ? 'text-red-300'
-        : tone === 'gold'
+        : tone === 'money'
           ? 'text-gold-400'
           : 'text-ink-50';
   return (
-    <div className="rounded-xl border border-white/5 bg-white/[.02] px-3 py-2.5">
-      <div className="text-[11px] font-medium uppercase tracking-wider text-ink-500">{label}</div>
-      <div className={`num mt-0.5 text-lg font-semibold leading-tight ${toneClass}`}>{value}</div>
+    <div className="rounded-control bg-white/[.025] px-3 py-2.5 outline outline-1 -outline-offset-1 outline-white/[.045]">
+      <div className="type-label text-xs font-medium text-ink-500">{label}</div>
+      <div
+        className={`type-title mt-1 text-[1.0625rem] font-semibold tabular-nums ${
+          mono ? 'num' : ''
+        } ${toneClass}`}
+      >
+        {value}
+      </div>
       {sub && <div className="mt-0.5 text-xs text-ink-500">{sub}</div>}
     </div>
   );
@@ -311,14 +413,17 @@ export function Stat({
 
 export function EmptyState({ title, hint }: { title: string; hint?: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-white/10 px-4 py-8 text-center">
+    <div className="rounded-control px-4 py-8 text-center outline-dashed outline-1 -outline-offset-1 outline-white/[.09]">
       <p className="text-sm font-medium text-ink-300">{title}</p>
-      {hint && <p className="mx-auto mt-1 max-w-sm text-xs text-ink-500">{hint}</p>}
+      {hint && <p className="type-body mx-auto mt-1.5 max-w-sm text-xs text-ink-500">{hint}</p>}
     </div>
   );
 }
 
-/** Confirms an action that would throw away work, without a blocking dialog. */
+/**
+ * Two-stage destructive action. Arming in place beats a modal for something
+ * this small, and it leaves an obvious way out: do nothing for three seconds.
+ */
 export function ConfirmButton({
   onConfirm,
   children,
@@ -327,7 +432,7 @@ export function ConfirmButton({
 }: {
   onConfirm: () => void;
   children: ReactNode;
-  confirmLabel?: string;
+  confirmLabel?: ReactNode;
   className?: string;
 }) {
   const [armed, setArmed] = useState(false);
@@ -341,20 +446,56 @@ export function ConfirmButton({
   );
 
   return (
-    <button
-      type="button"
+    <Pressable
+      depth="sm"
       className={className}
       onClick={() => {
         if (armed) {
           setArmed(false);
+          haptic('commit');
           onConfirm();
           return;
         }
+        haptic('warn');
         setArmed(true);
         timer.current = window.setTimeout(() => setArmed(false), 3000);
       }}
     >
       {armed ? confirmLabel : children}
-    </button>
+    </Pressable>
   );
 }
+
+/** Primary action with its trailing glyph seated in a well of its own. */
+export function ActionButton({
+  children,
+  onClick,
+  disabled,
+  className = '',
+  feedback = 'commit',
+  glyph = ArrowRight,
+}: {
+  children: ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  className?: string;
+  feedback?: 'commit' | 'select';
+  glyph?: typeof ArrowRight;
+}) {
+  return (
+    <Pressable
+      depth="lg"
+      feedback={feedback}
+      disabled={disabled}
+      onClick={onClick}
+      className={`btn-primary group w-full !py-2.5 !pl-5 !pr-2 text-[0.9375rem] ${className}`}
+    >
+      <span className="flex-1 text-left">{children}</span>
+      <span className="btn-slug transition-transform duration-300 ease-standard group-hover:translate-x-0.5">
+        <Icon as={glyph} size={16} />
+      </span>
+    </Pressable>
+  );
+}
+
+export { CheckCircle };

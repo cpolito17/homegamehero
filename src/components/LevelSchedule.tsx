@@ -25,7 +25,7 @@ export function LevelSchedule({
     <div className="overflow-x-auto">
       <table className="w-full min-w-[20rem] text-sm">
         <thead>
-          <tr className="text-[11px] uppercase tracking-wider text-ink-500">
+          <tr className="text-xs font-medium text-ink-500">
             <th className="py-1.5 pr-2 text-left font-medium">Level</th>
             <th className="py-1.5 pr-2 text-right font-medium">Blinds</th>
             <th className="py-1.5 pr-2 text-right font-medium">Ante</th>
@@ -53,11 +53,11 @@ export function LevelSchedule({
                 </td>
                 <td className="num py-1.5 pr-2 text-right">
                   {level.isBreak
-                    ? '—'
+                    ? ''
                     : `${formatUnits(level.smallBlind, scale)} / ${formatUnits(level.bigBlind, scale)}`}
                 </td>
                 <td className="num py-1.5 pr-2 text-right text-ink-400">
-                  {level.ante > 0 ? formatUnits(level.ante, scale) : '—'}
+                  {level.ante > 0 ? formatUnits(level.ante, scale) : ''}
                 </td>
                 <td className="num py-1.5 text-right text-ink-400">{level.minutes}m</td>
               </tr>

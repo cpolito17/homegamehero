@@ -94,7 +94,7 @@ function PlayerRow({
 
   return (
     <div
-      className={`rounded-xl border p-3 transition ${
+      className={`rounded-control border p-3 transition ${
         left || busted ? 'border-white/5 bg-white/[.01] opacity-60' : 'border-white/5 bg-white/[.02]'
       }`}
     >
@@ -105,10 +105,20 @@ function PlayerRow({
             {busted && <span className="text-[10px] font-bold uppercase text-red-300">Out</span>}
             {left && <span className="text-[10px] font-bold uppercase text-gold-400">Cashed</span>}
           </div>
-          <div className="num mt-0.5 text-xs text-ink-500">
-            in {formatMoney(inCents)}
-            {rebuys > 0 && ` · ${rebuys} rebuy${rebuys > 1 ? 's' : ''}`}
-            {outCents > 0 && ` · out ${formatMoney(outCents)}`}
+          <div className="mt-1 flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5 text-xs text-ink-500">
+            <span>
+              in <span className="num">{formatMoney(inCents)}</span>
+            </span>
+            {rebuys > 0 && (
+              <span>
+                {rebuys} rebuy{rebuys > 1 ? 's' : ''}
+              </span>
+            )}
+            {outCents > 0 && (
+              <span>
+                out <span className="num">{formatMoney(outCents)}</span>
+              </span>
+            )}
           </div>
         </div>
 
@@ -146,7 +156,7 @@ function PlayerRow({
       </div>
 
       {open === 'rebuy' && (
-        <div className="mt-3 animate-slide-up border-t border-white/5 pt-3">
+        <div className="mt-3 border-t border-white/[.06] pt-3">
           <Field label="Rebuy amount">
             <NumberInput
               value={rebuyAmount}
@@ -183,7 +193,7 @@ function PlayerRow({
       )}
 
       {open === 'cashout' && (
-        <div className="mt-3 animate-slide-up border-t border-white/5 pt-3">
+        <div className="mt-3 border-t border-white/[.06] pt-3">
           <span className="label">Chips they're handing back</span>
           <ChipCountEntry
             chipSet={state.chipSet}
@@ -193,7 +203,7 @@ function PlayerRow({
             onChange={(colorId, count) => setCashChips((c) => ({ ...c, [colorId]: count }))}
             compact
           />
-          <div className="mt-3 flex items-center justify-between rounded-xl border border-white/5 bg-white/[.02] px-3 py-2">
+          <div className="mt-3 flex items-center justify-between rounded-control border border-white/5 bg-white/[.02] px-3 py-2">
             <span className="text-xs text-ink-400">Pay them</span>
             <span className="num text-lg font-bold text-gold-400">{formatMoney(cashCents)}</span>
           </div>
@@ -227,7 +237,7 @@ function PlayerRow({
             counts={chips}
             chipSet={state.chipSet}
             scale={state.scale}
-            showTotal={false}
+            summary="none"
           />
         </div>
       )}

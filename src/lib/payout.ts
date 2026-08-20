@@ -13,7 +13,7 @@ export interface PayoutLine {
   buyInCents: number;
   /** Payout minus buy-ins. The number everyone actually cares about. */
   netCents: number;
-  /** True for players who cashed out and left — already settled in cash. */
+  /** True for players who cashed out and left, already settled in cash. */
   settled: boolean;
 }
 
@@ -51,7 +51,7 @@ export interface CashPayoutInput {
 /**
  * Turns chip counts into dollar amounts.
  *
- * The counted chips almost never add up to the money that went in — one rolls
+ * The counted chips almost never add up to the money that went in. One rolls
  * under the table, someone pockets a souvenir, a stack gets miscounted. This
  * refuses to invent or destroy money silently: it reports the gap and pays out
  * against whichever total the host chose to trust.
@@ -93,7 +93,7 @@ export function computeCashPayout(input: CashPayoutInput): CashPayoutResult {
       message:
         deltaCents > 0
           ? "The chips on the table are worth more than the money that went in. Recount, or check whether a buy-in went unrecorded."
-          : "The chips on the table are worth less than the money that went in. Chips are missing — recount before paying anyone.",
+          : "The chips on the table are worth less than the money that went in. Chips are missing, so recount before paying anyone.",
     });
   }
   if (deltaCents !== 0 && input.resolution === 'scale') {
@@ -189,7 +189,7 @@ export function prizeSplitNotices(split: PrizeSlot[]): Notice[] {
  * Splits the prize pool across places.
  *
  * Percentages are rounded with the largest-remainder method so the prizes add up
- * to the pool exactly — no stray cent left in the box, no prize a dollar short.
+ * to the pool exactly, with no stray cent left in the box and no prize a dollar short.
  */
 export function computePrizes(opts: {
   poolCents: number;

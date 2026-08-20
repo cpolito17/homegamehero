@@ -2,7 +2,11 @@ import { BankPanel } from '@/components/BankPanel';
 import { ColorUpPanel } from '@/components/ColorUpPanel';
 import { GamePlayers } from '@/components/GamePlayers';
 import { TournamentClock } from '@/components/TournamentClock';
-import { Card, SectionTitle, Stat } from '@/components/Ui';
+import { CaretLeft } from '@phosphor-icons/react';
+import { ActionBar } from '@/components/ActionBar';
+import { Icon } from '@/components/Icon';
+import { Pressable } from '@/components/Pressable';
+import { ActionButton, Card, SectionTitle, Stat } from '@/components/Ui';
 import { formatUnits } from '@/lib/money';
 import { useDispatch, useGameState } from '@/state/store';
 
@@ -16,7 +20,7 @@ export function Game() {
   ).length;
 
   return (
-    <div className="space-y-4 pb-28">
+    <div className="space-y-4 pb-32">
       {isTournament ? (
         <TournamentClock />
       ) : (
@@ -24,11 +28,11 @@ export function Game() {
           <SectionTitle title="Stakes" hint="Fixed for the session." />
           <div className="grid grid-cols-2 gap-2">
             <Stat
-              label="Blinds"
+              label="Blinds" mono
               value={`${formatUnits(state.cash.smallBlind, state.scale)} / ${formatUnits(state.cash.bigBlind, state.scale)}`}
               tone="good"
             />
-            <Stat label="Still playing" value={remaining} />
+            <Stat label="Still playing" mono value={remaining} />
           </div>
         </Card>
       )}
@@ -37,24 +41,19 @@ export function Game() {
       <GamePlayers />
       <BankPanel />
 
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/5 bg-ink-975/90 px-4 pb-[calc(0.75rem+var(--safe-b))] pt-3 backdrop-blur">
-        <div className="mx-auto flex max-w-2xl items-center gap-3">
-          <button
-            type="button"
-            className="btn-ghost shrink-0"
-            onClick={() => dispatch({ type: 'setPhase', phase: 'pregame' })}
-          >
-            Setup
-          </button>
-          <button
-            type="button"
-            className="btn-gold flex-1 !py-3 text-base"
-            onClick={() => dispatch({ type: 'setPhase', phase: 'payout' })}
-          >
-            Cash out the table
-          </button>
-        </div>
-      </div>
+      <ActionBar>
+        <Pressable
+          depth="sm"
+          className="btn-ghost shrink-0"
+          onClick={() => dispatch({ type: 'setPhase', phase: 'pregame' })}
+        >
+          <Icon as={CaretLeft} size={15} />
+          Setup
+        </Pressable>
+        <ActionButton onClick={() => dispatch({ type: 'setPhase', phase: 'payout' })}>
+          Cash out the table
+        </ActionButton>
+      </ActionBar>
     </div>
   );
 }

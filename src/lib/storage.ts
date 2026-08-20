@@ -25,7 +25,7 @@ function write(key: string, value: unknown): void {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    /* private mode, quota, or no storage at all — the app still works in memory */
+    /* private mode, quota, or no storage at all: the app still works in memory */
   }
 }
 

@@ -23,7 +23,7 @@ export function TournamentPanel() {
     dispatch({ type: 'patchTournament', patch: { levels: generated } });
   }, [generated, t.levelsAuto, t.levels, dispatch]);
 
-  // Entries only at this point — rebuys and add-ons join the pool as they happen.
+  // Entries only at this point. Rebuys and add-ons join the pool as they happen.
   const prizePool = t.buyInCents * state.players.length;
   const startDepth = t.levels[0]?.bigBlind
     ? Math.round(t.startingStackUnits / t.levels[0].bigBlind)
@@ -115,12 +115,12 @@ export function TournamentPanel() {
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2">
-          <Stat label="Levels" value={t.levels.filter((l) => !l.isBreak).length} />
+          <Stat label="Levels" mono value={t.levels.filter((l) => !l.isBreak).length} />
           <Stat
-            label="Runs about"
+            label="Runs about" mono
             value={`${Math.round((scheduleDurationMinutes(t.levels) / 60) * 10) / 10}h`}
           />
-          <Stat label="Starts at" value={`${startDepth} bb`} tone={startDepth < 30 ? 'bad' : 'good'} />
+          <Stat label="Starts at" mono value={`${startDepth} bb`} tone={startDepth < 30 ? 'bad' : 'good'} />
         </div>
 
         <div className="mt-3 flex items-center gap-2">
@@ -213,7 +213,7 @@ export function TournamentPanel() {
       <Card>
         <SectionTitle
           title="Prizes"
-          hint="Your call — nothing is recommended here. The pool grows with every rebuy."
+          hint="Yours to set. The pool grows with every rebuy."
         />
         <PrizeSplitEditor
           split={t.prizeSplit}

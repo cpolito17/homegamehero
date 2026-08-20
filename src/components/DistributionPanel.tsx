@@ -99,7 +99,7 @@ export function DistributionPanel() {
       </button>
 
       {result && (
-        <div className="mt-5 animate-slide-up">
+        <div className="mt-5">
           <Notices notices={result.notices} className="mb-4" />
 
           <div className="space-y-2">
@@ -108,7 +108,7 @@ export function DistributionPanel() {
               return (
                 <div
                   key={stack.playerId}
-                  className="rounded-xl border border-white/5 bg-white/[.02] p-3"
+                  className="rounded-control border border-white/5 bg-white/[.02] p-3"
                 >
                   <div className="mb-2 flex items-baseline justify-between gap-3">
                     <span className="truncate text-sm font-semibold text-ink-100">
@@ -123,7 +123,12 @@ export function DistributionPanel() {
                       )}
                     </span>
                   </div>
-                  <ChipStackView counts={stack.counts} chipSet={state.chipSet} scale={state.scale} />
+                  <ChipStackView
+                    counts={stack.counts}
+                    chipSet={state.chipSet}
+                    scale={state.scale}
+                    summary="count"
+                  />
                 </div>
               );
             })}
@@ -144,7 +149,7 @@ export function DistributionPanel() {
           </div>
 
           {countChips(result.reserve) > 0 && (
-            <div className="mt-3 rounded-xl border border-white/5 bg-white/[.02] p-3">
+            <div className="mt-3 rounded-control border border-white/5 bg-white/[.02] p-3">
               <span className="label">Set aside for rebuys</span>
               <ChipStackView counts={result.reserve} chipSet={state.chipSet} scale={state.scale} />
             </div>

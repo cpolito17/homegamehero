@@ -12,7 +12,7 @@ export interface ColorUpSuggestion {
  * Finds a denomination that no longer does any work.
  *
  * Once every blind and ante is a clean multiple of the next chip up, the smaller
- * chip can only slow the game down — it clutters stacks and nobody can bet it.
+ * chip can only slow the game down: it clutters stacks and nobody can bet it.
  * That is the moment to race it off.
  */
 export function suggestColorUp(
@@ -65,7 +65,7 @@ export interface ColorUpResult {
  * Races off a denomination.
  *
  * Everyone gets the whole chips their stack converts to. The odd value left over
- * is pooled and awarded to the biggest remainders — the deterministic equivalent
+ * is pooled and awarded to the biggest remainders, the deterministic equivalent
  * of dealing cards for the odd chips, and it settles the argument about who eats
  * the rounding before it starts.
  */

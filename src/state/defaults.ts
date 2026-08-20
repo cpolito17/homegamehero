@@ -50,7 +50,7 @@ export function defaultTournament(): TournamentConfig {
     addOnCents: 2000,
     addOnStackUnits: 3000,
     levels: [],
-    // Deliberately not a recommended structure — the host sets these each game.
+    // Deliberately not a recommended structure: the host sets these each game.
     prizeSplit: [{ place: 1, percent: 100 }],
     levelsAuto: true,
   };
