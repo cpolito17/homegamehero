@@ -17,8 +17,19 @@ export interface PayoutLine {
   settled: boolean;
 }
 
+/**
+ * Stand-in counterparty for money that no player is on the hook for.
+ *
+ * Only appears when the counted chips disagree with the cash that went in and
+ * the host has not resolved the gap. Without it the settlement would quietly
+ * drop a creditor, which is how a winner ends up owed money by nobody.
+ */
+export const POT_ID = '__pot__';
+
 export interface Transfer {
+  /** A player id, or POT_ID when the pot itself is covering the difference. */
   fromPlayerId: string;
+  /** A player id, or POT_ID when the leftover stays in the pot. */
   toPlayerId: string;
   cents: number;
 }
@@ -114,9 +125,27 @@ export function computeCashPayout(input: CashPayoutInput): CashPayoutResult {
     potCents,
     countedCents,
     deltaCents,
-    transfers: settle(lines.filter((l) => !l.settled)),
+    transfers: settleAll(lines),
     notices,
   };
+}
+
+/**
+ * Settles a whole table, including anyone who cashed out and left.
+ *
+ * Every player's net has to land somewhere. A player who left is still owed
+ * their win or still owes their loss, so leaving them out of the matching
+ * breaks the zero-sum and strands whoever they were going to be paid by.
+ *
+ * If the nets still do not cancel, the books genuinely do not balance: the chips
+ * counted are worth more or less than the cash that went in. Rather than drop
+ * the odd money, the pot takes the other side of it so the difference is visible.
+ */
+export function settleAll(lines: { playerId: string; netCents: number }[]): Transfer[] {
+  const imbalance = lines.reduce((s, l) => s + l.netCents, 0);
+  const withPot =
+    imbalance === 0 ? lines : [...lines, { playerId: POT_ID, netCents: -imbalance }];
+  return settle(withPot);
 }
 
 /**

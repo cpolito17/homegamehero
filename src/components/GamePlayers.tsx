@@ -13,7 +13,6 @@ type OpenPanel = { playerId: string; kind: 'rebuy' | 'cashout' } | null;
 
 export function GamePlayers() {
   const state = useGameState();
-  const dispatch = useDispatch();
   const [open, setOpen] = useState<OpenPanel>(null);
 
   const isTournament = state.format === 'tournament';
@@ -47,14 +46,91 @@ export function GamePlayers() {
         ))}
       </div>
 
+      <LateArrival />
+    </Card>
+  );
+}
+
+/**
+ * Someone walking in after the deal still has to buy in, and not always for the
+ * same amount as everyone else, so the host sets it here rather than inheriting
+ * a number they never agreed to.
+ */
+function LateArrival() {
+  const state = useGameState();
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+
+  const isTournament = state.format === 'tournament';
+  const defaultBuyIn = isTournament
+    ? state.tournament.buyInCents
+    : state.cash.universalBuyInCents;
+  const [name, setName] = useState('');
+  const [amount, setAmount] = useState(defaultBuyIn);
+
+  if (!open) {
+    return (
       <button
         type="button"
         className="btn-ghost mt-3 !py-2 !text-xs"
-        onClick={() => dispatch({ type: 'addPlayer' })}
+        onClick={() => {
+          setName('');
+          setAmount(defaultBuyIn);
+          setOpen(true);
+        }}
       >
         + Late arrival
       </button>
-    </Card>
+    );
+  }
+
+  const units = stackUnitsFor(state, amount);
+
+  return (
+    <div className="mt-3 animate-slide-up rounded-control border border-white/5 bg-white/[.02] p-3">
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="Name">
+          <input
+            className="input"
+            value={name}
+            placeholder={`Player ${state.players.length + 1}`}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+          />
+        </Field>
+        <Field label="Buy-in">
+          <NumberInput
+            value={amount}
+            onCommit={setAmount}
+            format={formatMoney}
+            parse={parseMoney}
+            disabled={isTournament}
+            selectOnFocus
+          />
+        </Field>
+      </div>
+      <p className="mt-2 text-xs text-ink-500">
+        {isTournament
+          ? 'Everyone enters a tournament for the same amount.'
+          : `They get a stack worth ${formatMoney(amount)} from what is left in the box.`}
+      </p>
+      <div className="mt-3 flex gap-2">
+        <button
+          type="button"
+          className="btn-primary !py-2 !text-xs"
+          disabled={amount <= 0 || units <= 0}
+          onClick={() => {
+            dispatch({ type: 'addPlayer', name, buyInCents: amount });
+            setOpen(false);
+          }}
+        >
+          Seat them
+        </button>
+        <button type="button" className="btn-ghost !py-2 !text-xs" onClick={() => setOpen(false)}>
+          Cancel
+        </button>
+      </div>
+    </div>
   );
 }
 

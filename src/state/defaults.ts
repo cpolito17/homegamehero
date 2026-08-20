@@ -85,5 +85,6 @@ export function createGame(scale: ChipScale = { kind: 'dollar' }): GameState {
     eliminations: [],
     retiredColorIds: [],
     payout: { entryMode: 'chips', chipCounts: {}, totals: {}, resolution: 'none', computed: false },
+    snapshots: [],
   };
 }

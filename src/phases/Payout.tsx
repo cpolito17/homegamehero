@@ -17,7 +17,7 @@ import {
   Stat,
 } from '@/components/Ui';
 import { moneyIn, moneyOut, totalMoneyIn } from '@/lib/ledger';
-import { computeCashPayout, computePrizes, finishOrderFrom } from '@/lib/payout';
+import { computeCashPayout, computePrizes, finishOrderFrom, POT_ID } from '@/lib/payout';
 import { formatMoney, formatSigned, formatUnits, parseUnits } from '@/lib/money';
 import { SPRING } from '@/lib/motion';
 import { pushHistory } from '@/lib/storage';
@@ -249,8 +249,12 @@ function CashPayout() {
             ) : (
               <ul className="space-y-1.5">
                 {result.transfers.map((transfer, i) => {
-                  const from = state.players.find((p) => p.id === transfer.fromPlayerId);
-                  const to = state.players.find((p) => p.id === transfer.toPlayerId);
+                  const nameOf = (id: string) =>
+                    id === POT_ID
+                      ? 'The pot'
+                      : (state.players.find((p) => p.id === id)?.name ?? 'Unknown');
+                  const from = { name: nameOf(transfer.fromPlayerId) };
+                  const to = { name: nameOf(transfer.toPlayerId) };
                   return (
                     <li
                       key={i}

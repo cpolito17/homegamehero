@@ -30,13 +30,15 @@ function write(key: string, value: unknown): void {
 }
 
 /**
- * Migrates a stored game forward. Nothing to do at v1, but the hook exists so a
- * saved game from an older build never comes back as a half-populated object.
+ * Migrates a stored game forward, so a saved game from an older build never
+ * comes back as a half-populated object.
  */
 function migrateGame(state: GameState): GameState | null {
   if (!state || typeof state !== 'object') return null;
   if (state.version !== SCHEMA_VERSION) return null;
-  return state;
+  // Snapshots were added after the first builds shipped. A game saved before
+  // then is otherwise fine, so backfill the field rather than drop the session.
+  return { ...state, snapshots: state.snapshots ?? [] };
 }
 
 export function loadGame(): GameState | null {

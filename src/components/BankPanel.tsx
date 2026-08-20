@@ -37,10 +37,17 @@ export function BankPanel() {
         }
       />
 
-      <div className="grid grid-cols-3 gap-2">
+      {/* Three across while the panel has the page width, stacked once it is a
+          side rail, where "On the table" would otherwise have to truncate. */}
+      <div className="grid grid-cols-3 gap-2 lg:hidden">
         <Stat label="Paid in" mono value={formatMoney(inCents)} />
         <Stat label="Paid out" mono value={formatMoney(outCents)} />
         <Stat label="On the table" mono value={formatMoney(onTable)} tone="money" />
+      </div>
+      <div className="hidden space-y-1.5 lg:block">
+        <Stat row label="Paid in" mono value={formatMoney(inCents)} />
+        <Stat row label="Paid out" mono value={formatMoney(outCents)} />
+        <Stat row label="On the table" mono value={formatMoney(onTable)} tone="money" />
       </div>
 
       <div className="mt-3 space-y-1.5">
@@ -59,8 +66,9 @@ export function BankPanel() {
                   style={{ width: `${Math.min(100, Math.max(0, pct * 100))}%` }}
                 />
               </div>
+              {/* Fixed widths clip a four-digit box: "101 / 325" has to stay on one line. */}
               <span
-                className={`num w-14 shrink-0 text-right text-xs ${
+                className={`num shrink-0 whitespace-nowrap text-right text-xs tabular-nums ${
                   remaining < 0 ? 'text-red-300' : 'text-ink-400'
                 }`}
               >

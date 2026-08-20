@@ -380,6 +380,7 @@ export function Stat({
   sub,
   tone = 'default',
   mono = false,
+  row = false,
 }: {
   label: string;
   value: ReactNode;
@@ -387,6 +388,9 @@ export function Stat({
   tone?: 'default' | 'good' | 'bad' | 'money';
   /** Set for values that are purely a number or an amount. Words stay in Geist. */
   mono?: boolean;
+  /** Label beside the value instead of above it, for narrow columns where a
+   *  stacked label would have to truncate. */
+  row?: boolean;
 }) {
   const toneClass =
     tone === 'good'
@@ -396,11 +400,26 @@ export function Stat({
         : tone === 'money'
           ? 'text-gold-400'
           : 'text-ink-50';
+  if (row) {
+    return (
+      <div className="flex min-w-0 items-baseline justify-between gap-3 rounded-control bg-white/[.025] px-3 py-2 outline outline-1 -outline-offset-1 outline-white/[.045]">
+        <span className="type-label min-w-0 truncate text-xs font-medium text-ink-500">{label}</span>
+        <span
+          className={`type-title shrink-0 whitespace-nowrap text-[0.9375rem] font-semibold tabular-nums ${
+            mono ? 'num' : ''
+          } ${toneClass}`}
+        >
+          {value}
+        </span>
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-control bg-white/[.025] px-3 py-2.5 outline outline-1 -outline-offset-1 outline-white/[.045]">
-      <div className="type-label text-xs font-medium text-ink-500">{label}</div>
+    <div className="min-w-0 rounded-control bg-white/[.025] px-3 py-2.5 outline outline-1 -outline-offset-1 outline-white/[.045]">
+      <div className="type-label truncate text-xs font-medium text-ink-500">{label}</div>
       <div
-        className={`type-title mt-1 text-[1.0625rem] font-semibold tabular-nums ${
+        className={`type-title mt-1 truncate text-[1.0625rem] font-semibold tabular-nums ${
           mono ? 'num' : ''
         } ${toneClass}`}
       >

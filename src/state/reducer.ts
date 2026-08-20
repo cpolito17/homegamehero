@@ -1,5 +1,5 @@
 import { buildLevels } from '@/lib/blinds';
-import { activeColors, assignValues, denominations, newChipColor } from '@/lib/chips';
+import { activeColors, assignValues, countUnits, denominations, newChipColor } from '@/lib/chips';
 import { distribute, rebuyStack } from '@/lib/distribution';
 import { chipsHandedOut } from '@/lib/ledger';
 import { centsToUnits, uid, type ChipScale } from '@/lib/money';
@@ -33,7 +33,9 @@ export type Action =
   | { type: 'updateColor'; id: string; patch: Partial<ChipColor> }
   | { type: 'removeColor'; id: string }
   | { type: 'setColors'; colors: ChipColor[] }
-  | { type: 'addPlayer'; name?: string }
+  | { type: 'addPlayer'; name?: string; buyInCents?: number }
+  | { type: 'addSnapshot'; label: string; counts: Record<string, ChipCount> }
+  | { type: 'removeSnapshot'; id: string }
   | { type: 'updatePlayer'; id: string; patch: Partial<Player> }
   | { type: 'removePlayer'; id: string }
   | { type: 'applyUniversalBuyIn'; cents: number }
@@ -217,21 +219,49 @@ export function reducer(state: GameState, action: Action): GameState {
 
     case 'addPlayer': {
       const seat = state.players.length;
-      const buyIn =
+      const defaultBuyIn =
         state.format === 'tournament' ? state.tournament.buyInCents : state.cash.universalBuyInCents;
+      const buyIn = action.buyInCents ?? defaultBuyIn;
+      const player: Player = {
+        id: uid('player'),
+        name: action.name?.trim() || `Player ${seat + 1}`,
+        buyInCents: buyIn,
+        seat,
+        leftAt: null,
+      };
+
+      // Before the game starts, the buy-in is recorded when the host deals out
+      // stacks. Someone walking in mid-game never passes through that step, so
+      // their money has to be booked here or they read as having paid nothing.
+      if (state.phase !== 'game') {
+        return touch({ ...state, players: [...state.players, player], distribution: null });
+      }
+
+      const blinds = currentBlinds(state);
+      const stack = rebuyStack({
+        chipSet: state.chipSet,
+        alreadyHandedOut: chipsHandedOut(state.ledger),
+        targetUnits: stackUnitsFor(state, buyIn),
+        mode: state.distributionMode,
+        smallBlind: blinds.smallBlind,
+        bigBlind: blinds.bigBlind,
+      });
+
       return touch({
         ...state,
-        players: [
-          ...state.players,
+        players: [...state.players, player],
+        ledger: [
+          ...state.ledger,
           {
-            id: uid('player'),
-            name: action.name?.trim() || `Player ${seat + 1}`,
-            buyInCents: buyIn,
-            seat,
-            leftAt: null,
+            id: uid('entry'),
+            playerId: player.id,
+            kind: 'buyin',
+            amountCents: buyIn,
+            chips: stack.counts,
+            at: Date.now(),
+            note: stack.exact ? undefined : 'Chips left in the box could not make this exactly.',
           },
         ],
-        distribution: null,
       });
     }
 
@@ -390,6 +420,26 @@ export function reducer(state: GameState, action: Action): GameState {
           : [...state.eliminations, action.playerId],
       });
     }
+
+    case 'addSnapshot': {
+      const totals: Record<string, number> = {};
+      for (const [playerId, counts] of Object.entries(action.counts)) {
+        totals[playerId] = countUnits(counts, state.chipSet);
+      }
+      return touch({
+        ...state,
+        snapshots: [
+          ...state.snapshots,
+          { id: uid('snap'), at: Date.now(), label: action.label, counts: action.counts, totals },
+        ],
+      });
+    }
+
+    case 'removeSnapshot':
+      return touch({
+        ...state,
+        snapshots: state.snapshots.filter((s) => s.id !== action.id),
+      });
 
     case 'retireColor':
       return touch({

@@ -5,6 +5,7 @@ import {
   finishOrderFrom,
   prizeSplitNotices,
   settle,
+  POT_ID,
 } from '../payout';
 import type { CashPayoutInput } from '../payout';
 
@@ -55,7 +56,7 @@ describe('computeCashPayout', () => {
     expect(result.lines.reduce((s, l) => s + l.payoutCents, 0)).toBe(1500);
   });
 
-  it('leaves players who cashed out early alone', () => {
+  it('pays a player who left on what they took, not on their chips', () => {
     const result = computeCashPayout({
       players: [
         { id: 'a', chipUnits: 4000, buyInCents: 2000, cashedOutCents: 0, left: false },
@@ -68,7 +69,22 @@ describe('computeCashPayout', () => {
     // c took nothing off the table, so the pot is still the full $60.
     expect(result.potCents).toBe(6000);
     expect(result.lines[2]!.settled).toBe(true);
-    expect(result.transfers.every((t) => t.fromPlayerId !== 'c' && t.toPlayerId !== 'c')).toBe(true);
+    expect(result.lines[2]!.payoutCents).toBe(0);
+  });
+
+  it('still settles a player who busted out and left', () => {
+    // c lost the lot and walked. a won it. If c drops out of the settlement,
+    // a is owed $20 by nobody, which is the whole bug this guards.
+    const result = computeCashPayout({
+      players: [
+        { id: 'a', chipUnits: 4000, buyInCents: 2000, cashedOutCents: 0, left: false },
+        { id: 'b', chipUnits: 2000, buyInCents: 2000, cashedOutCents: 0, left: false },
+        { id: 'c', chipUnits: 0, buyInCents: 2000, cashedOutCents: 0, left: true },
+      ],
+      scale: DOLLAR,
+      resolution: 'none',
+    });
+    expect(result.transfers).toEqual([{ fromPlayerId: 'c', toPlayerId: 'a', cents: 2000 }]);
   });
 
   it('removes an early cash-out from the pot', () => {
@@ -182,5 +198,104 @@ describe('finishOrderFrom', () => {
 
   it('keeps several survivors ahead of the busted', () => {
     expect(finishOrderFrom(['c'], ['a', 'b', 'c'])).toEqual(['a', 'b', 'c']);
+  });
+});
+
+/**
+ * The property that matters: applying every transfer to every net position
+ * leaves everyone at zero. A settlement that "looks reasonable" but strands a
+ * creditor is the exact bug this suite exists to catch.
+ */
+function settlementClears(result: {
+  lines: { playerId: string; netCents: number }[];
+  transfers: { fromPlayerId: string; toPlayerId: string; cents: number }[];
+}) {
+  const balance = new Map<string, number>();
+  for (const line of result.lines) balance.set(line.playerId, line.netCents);
+  for (const t of result.transfers) {
+    // Only real players have to come out level. The pot is the counterparty that
+    // deliberately absorbs whatever the table could not account for.
+    if (balance.has(t.fromPlayerId)) {
+      balance.set(t.fromPlayerId, balance.get(t.fromPlayerId)! + t.cents);
+    }
+    if (balance.has(t.toPlayerId)) {
+      balance.set(t.toPlayerId, balance.get(t.toPlayerId)! - t.cents);
+    }
+  }
+  return [...balance.values()].every((v) => v === 0);
+}
+
+describe('settlement completeness', () => {
+  it('clears every net when the table balances', () => {
+    const result = computeCashPayout(table([3000, 1000, 2500, 3500], [2000, 2000, 2000, 4000]));
+    expect(settlementClears(result)).toBe(true);
+  });
+
+  it('pays a winner who would otherwise be owed money by nobody', () => {
+    // One player up $10 and one down $10. The winner must appear in the transfers.
+    const result = computeCashPayout(table([3000, 1000], [2000, 2000]));
+    const winner = result.lines.find((l) => l.netCents > 0)!;
+    expect(result.transfers.some((t) => t.toPlayerId === winner.playerId)).toBe(true);
+    expect(settlementClears(result)).toBe(true);
+  });
+
+  it('clears when a player cashed out and left', () => {
+    const result = computeCashPayout({
+      players: [
+        { id: 'a', chipUnits: 5000, buyInCents: 2000, cashedOutCents: 0, left: false },
+        { id: 'b', chipUnits: 1000, buyInCents: 2000, cashedOutCents: 0, left: false },
+        { id: 'c', chipUnits: 0, buyInCents: 4000, cashedOutCents: 2000, left: true },
+      ],
+      scale: DOLLAR,
+      resolution: 'none',
+    });
+    expect(settlementClears(result)).toBe(true);
+  });
+
+  it('hands an unresolved surplus to the pot rather than dropping it', () => {
+    // More chips counted than money in: someone is owed money the table cannot cover.
+    const result = computeCashPayout(table([3000, 3000], [2000, 2000]));
+    expect(result.deltaCents).toBe(2000);
+    expect(result.transfers.some((t) => t.fromPlayerId === POT_ID)).toBe(true);
+    expect(settlementClears(result)).toBe(true);
+  });
+
+  it('hands an unresolved shortfall to the pot rather than dropping it', () => {
+    const result = computeCashPayout(table([1000, 1000], [2000, 2000]));
+    expect(result.deltaCents).toBe(-2000);
+    expect(result.transfers.some((t) => t.toPlayerId === POT_ID)).toBe(true);
+    expect(settlementClears(result)).toBe(true);
+  });
+
+  it('needs no pot line once the discrepancy is scaled away', () => {
+    const result = computeCashPayout({
+      ...table([3000, 3000], [2000, 2000]),
+      resolution: 'scale',
+    });
+    expect(result.transfers.every((t) => t.fromPlayerId !== POT_ID && t.toPlayerId !== POT_ID)).toBe(
+      true,
+    );
+    expect(settlementClears(result)).toBe(true);
+  });
+
+  it('settles a full table in at most n-1 payments', () => {
+    const result = computeCashPayout(
+      table([4200, 800, 2600, 3100, 1300, 2000], [2000, 2000, 2000, 2000, 2000, 4000]),
+    );
+    expect(result.transfers.length).toBeLessThanOrEqual(result.lines.length - 1);
+    expect(settlementClears(result)).toBe(true);
+  });
+
+  it('moves no money when everyone breaks even', () => {
+    const result = computeCashPayout(table([2000, 2000, 2000], [2000, 2000, 2000]));
+    expect(result.transfers).toEqual([]);
+  });
+
+  it('never emits a self-payment or a zero transfer', () => {
+    const result = computeCashPayout(
+      table([4200, 800, 2600, 3100, 1300], [2000, 2000, 2000, 2000, 4000]),
+    );
+    expect(result.transfers.every((t) => t.fromPlayerId !== t.toPlayerId)).toBe(true);
+    expect(result.transfers.every((t) => t.cents > 0)).toBe(true);
   });
 });

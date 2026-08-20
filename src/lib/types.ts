@@ -157,6 +157,23 @@ export interface PayoutState {
   computed: boolean;
 }
 
+/**
+ * A record of what everyone had in front of them at one moment.
+ *
+ * Chips move around the table constantly, so the ledger cannot tell you who is
+ * up at the break. Counting the stacks is the only way to know, and writing it
+ * down is what settles the argument two hours later.
+ */
+export interface Snapshot {
+  id: string;
+  at: number;
+  label: string;
+  /** playerId -> per-colour chip counts as counted. */
+  counts: Record<string, ChipCount>;
+  /** playerId -> total chip units, denormalised so display never recomputes it. */
+  totals: Record<string, number>;
+}
+
 export interface GameState {
   version: number;
   id: string;
@@ -181,6 +198,8 @@ export interface GameState {
   /** Colours raced off the table. They stop appearing in chip counts. */
   retiredColorIds: string[];
   payout: PayoutState;
+  /** Stack counts recorded mid-game, newest last. */
+  snapshots: Snapshot[];
 }
 
 /** A saved chip set, reusable across games. */

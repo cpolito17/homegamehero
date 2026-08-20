@@ -194,3 +194,73 @@ describe('payout entry', () => {
     expect(next.payout.totals).toEqual({});
   });
 });
+
+describe('late arrivals', () => {
+  const seated = () =>
+    run(createGame(), { type: 'runDistribution' }, { type: 'startGame' });
+
+  it('books the buy-in of someone who joins mid-game', () => {
+    const before = seated();
+    const after = run(before, { type: 'addPlayer', name: 'Marisol' });
+    const marisol = after.players.at(-1)!;
+
+    expect(marisol.name).toBe('Marisol');
+    // The bug: the player record carried a buy-in but no ledger entry, so every
+    // money view read them as having paid nothing.
+    expect(moneyIn(after.ledger, marisol.id)).toBe(2000);
+    expect(totalMoneyIn(after.ledger)).toBe(totalMoneyIn(before.ledger) + 2000);
+  });
+
+  it('takes a buy-in that differs from the table', () => {
+    const after = run(seated(), { type: 'addPlayer', name: 'Marisol', buyInCents: 5000 });
+    const marisol = after.players.at(-1)!;
+
+    expect(marisol.buyInCents).toBe(5000);
+    expect(moneyIn(after.ledger, marisol.id)).toBe(5000);
+  });
+
+  it('hands the late arrival a stack worth what they paid', () => {
+    const after = run(seated(), { type: 'addPlayer', buyInCents: 5000 });
+    const marisol = after.players.at(-1)!;
+    const entry = after.ledger.find((e) => e.playerId === marisol.id)!;
+
+    expect(countUnits(entry.chips, after.chipSet)).toBe(stackUnitsFor(after, 5000));
+  });
+
+  it('still only edits the roster before the game starts', () => {
+    const after = run(createGame(), { type: 'addPlayer', name: 'Marisol' });
+    expect(after.ledger).toHaveLength(0);
+    expect(after.players.at(-1)!.buyInCents).toBe(2000);
+  });
+
+  it('keeps the table stake consistent with what the box handed out', () => {
+    const after = run(seated(), { type: 'addPlayer', buyInCents: 5000 });
+    expect(tableStakeCents(after.ledger)).toBe(4 * 2000 + 5000);
+  });
+});
+
+describe('snapshots', () => {
+  it('records every counted stack with its value', () => {
+    const game = run(createGame(), { type: 'runDistribution' }, { type: 'startGame' });
+    const [a, b] = game.players;
+    const white = game.chipSet.colors[0]!;
+
+    const after = run(game, {
+      type: 'addSnapshot',
+      label: 'First break',
+      counts: { [a!.id]: { [white.id]: 40 }, [b!.id]: { [white.id]: 8 } },
+    });
+
+    expect(after.snapshots).toHaveLength(1);
+    const snap = after.snapshots[0]!;
+    expect(snap.label).toBe('First break');
+    expect(snap.totals[a!.id]).toBe(40 * white.value!);
+    expect(snap.totals[b!.id]).toBe(8 * white.value!);
+  });
+
+  it('drops a snapshot on request', () => {
+    const game = run(createGame(), { type: 'addSnapshot', label: 'x', counts: {} });
+    const id = game.snapshots[0]!.id;
+    expect(run(game, { type: 'removeSnapshot', id }).snapshots).toHaveLength(0);
+  });
+});

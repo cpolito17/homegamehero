@@ -37,8 +37,11 @@ function Shell() {
         exit: { opacity: 0, x: direction * -22 },
       };
 
+  // The game phase carries a reference rail beside the main column.
+  const wide = state.phase === 'game';
+
   return (
-    <div className="mx-auto min-h-full max-w-2xl px-4">
+    <div className={`mx-auto min-h-full w-full px-4 ${wide ? 'max-w-2xl lg:max-w-[64rem]' : 'max-w-2xl'}`}>
       <header className="pt-5">
         <div className="mb-3 flex items-center gap-3">
           <img src="/icon.svg" alt="" className="h-9 w-9 rounded-inner" aria-hidden />
