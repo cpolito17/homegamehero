@@ -1,7 +1,13 @@
 // Cache-first service worker. The whole app is static, so a versioned precache of the
 // build output is enough to make the game work with no signal in someone's basement.
-const CACHE = 'homegamehero-v1';
-const CORE = ['/', '/index.html', '/manifest.webmanifest', '/icon.svg'];
+const BASE = new URL('.', self.location).pathname;
+const CACHE = 'homegamehero-v2';
+const CORE = [
+  BASE,
+  `${BASE}index.html`,
+  `${BASE}manifest.webmanifest`,
+  `${BASE}icon.svg`,
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -28,10 +34,10 @@ self.addEventListener('fetch', (event) => {
       fetch(request)
         .then((res) => {
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put('/index.html', copy));
+          caches.open(CACHE).then((c) => c.put(`${BASE}index.html`, copy));
           return res;
         })
-        .catch(() => caches.match('/index.html').then((r) => r ?? Response.error())),
+        .catch(() => caches.match(`${BASE}index.html`).then((r) => r ?? Response.error())),
     );
     return;
   }
