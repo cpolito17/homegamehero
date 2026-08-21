@@ -44,7 +44,7 @@ function Shell() {
     <div className="mx-auto min-h-full w-full max-w-2xl px-4 lg:max-w-[64rem]">
       <header className="pt-5">
         <div className="mb-3 flex items-center gap-3">
-          <img src="/icon.svg" alt="" className="h-9 w-9 rounded-inner" aria-hidden />
+          <img src={`${import.meta.env.BASE_URL}icon.svg`} alt="" className="h-9 w-9 rounded-inner" aria-hidden />
           <div className="min-w-0 flex-1">
             <h1 className="type-title text-sm font-semibold text-ink-50">HomeGameHero</h1>
             <input
