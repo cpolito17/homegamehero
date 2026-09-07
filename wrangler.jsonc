@@ -1,7 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "homegamehero",
-  "compatibility_date": "2025-01-01",
+  "compatibility_date": "2026-09-03",
+  "routes": [
+    { "pattern": "charliepolito.com/homegame", "zone_name": "charliepolito.com" },
+    { "pattern": "charliepolito.com/homegame/*", "zone_name": "charliepolito.com" }
+  ],
+  "workers_dev": true,
+  "preview_urls": false,
   // Static-asset-only Worker: there is no server-side code, all state lives in the
   // browser. `not_found_handling` serves the SPA shell for client-side routes.
   "assets": {

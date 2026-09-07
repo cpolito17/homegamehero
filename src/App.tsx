@@ -58,6 +58,14 @@ function Shell() {
           <span className="type-label shrink-0 rounded-full px-2.5 py-1 text-[0.6875rem] font-medium text-ink-400 outline outline-1 -outline-offset-1 outline-line/15">
             {state.format === 'cash' ? 'Cash' : 'Tournament'}
           </span>
+          <a
+            href="https://charliepolito.com/"
+            aria-label="Back to CharliePolito.com portfolio"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-inner px-2.5 py-2 text-xs font-medium text-ink-300 outline outline-1 -outline-offset-1 outline-line/20 transition-colors hover:text-ink-50 focus-visible:outline-2 focus-visible:outline-accent"
+          >
+            <img src={`${import.meta.env.BASE_URL}charlie-monogram.svg`} alt="" aria-hidden className="h-5 w-5" />
+            <span className="hidden sm:inline">CharliePolito.com</span>
+          </a>
           <ThemeToggle />
         </div>
       </header>
